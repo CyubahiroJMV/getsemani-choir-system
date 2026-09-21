@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chorale Getsemani - Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f1f5f9; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .login-container { width: 100%; max-width: 400px; background: white; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .login-header { background: #1e3a8a; color: white; padding: 25px; text-align: center; }
+        .login-header h2 { margin: 0; font-size: 1.6em; }
+        .login-body { padding: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #4a5568; font-size: 0.9em; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.95em; }
+        .form-group select { color: #1e3a8a; font-weight: bold; }
+        .btn-login { background: #2563eb; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1em; margin-top: 10px; }
+        .btn-login:hover { background: #1d4ed8; }
+        .error-message { background: #fef2f2; color: #dc2626; border-left: 4px solid #dc2626; padding: 10px; border-radius: 4px; font-size: 0.9em; margin-bottom: 15px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h2>Sign In Portal</h2>
+            <p style="margin:5px 0 0 0; font-size:0.85em; opacity:0.8;">Urubuga rwa Korali Getsemani</p>
+        </div>
+        <div class="login-body">
+            
+            <!-- GUHAMAGARA ERROR ERRORS IGIHE WINJIYE NABI CYANGWA KONTINABI -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-message">⚠️ {{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                <!-- INTAMBWE NSHYA: AKAZU KO GUHITAMO ROLE (ADMIN CYANGWA SINGER) -->
+                <div class="form-group">
+                    <label>🎭 Urashaka Kwinjira nka:</label>
+                    <select name="user_role" required>
+                        <option value="singer">🎵 Umuririmbyi usanzwe (Singer)</option>
+                        <option value="admin">🔐 Ubuyobozi bwa Korali (Admin)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" name="username" placeholder="Andika izina ryako..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" name="password" placeholder="Andika password..." required>
+                </div>
+
+                <button type="submit" class="btn-login">Sign In ➔</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px; font-size: 0.9em; color: #718096;">
+                Nta konti ufite? <a href="{% url 'register' %}" style="color: #2563eb; font-weight: bold; text-decoration: none;">Register Here</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

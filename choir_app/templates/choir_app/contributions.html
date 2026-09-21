@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Applicant Portal - Amaturo n'Imisanzu</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f1f5f9; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* SIDEBAR IBUMOSO */
+        .sidebar { width: 260px; background: #1e3a8a; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; z-index: 10; }
+        .side-top h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3em; border-bottom: 1px solid #2563eb; padding-bottom: 15px; }
+        .side-menu a { padding: 12px 25px; color: #cbd5e1; text-decoration: none; display: block; font-weight: 600; font-size: 0.95em; }
+        .side-menu a:hover, .side-menu a.active { background: #2563eb; color: white; }
+        .side-user-box { padding: 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 45px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+        
+        /* MAIN CONTENT AREA */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background-color: #f1f5f9; }
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .top-navbar a { color: #2563eb; font-weight: bold; text-decoration: none; }
+
+        /* BOX ZA FILTER HAMWE NA BUTO YA DOWNLOAD */
+        .filter-navbar { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; gap: 20px; align-items: flex-end; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; flex: 1; max-width: 300px; }
+        .filter-group label { font-weight: 600; font-size: 0.85em; color: #475569; text-transform: uppercase; }
+        .filter-select { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.95em; outline: none; color: #1e3a8a; font-weight: bold; }
+        
+        /* BUTO YA DOWNLOAD */
+        .btn-download { background: #ed8936; color: white; padding: 11px 25px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.95em; transition: 0.2s; height: 42px; }
+        .btn-download:hover { background: #dd6b20; box-shadow: 0 4px 10px rgba(237, 137, 54, 0.3); }
+
+        /* BOX Y'ISANDUKU (DYNAMIC LIVE TOTAL) */
+        .total-display-box { background: #f0fdf4; border-left: 6px solid #16a34a; padding: 20px; border-radius: 8px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+        .total-left h4 { margin: 0; color: #16a34a; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
+        .total-left .total-title-dynamic { margin: 5px 0 0 0; font-size: 1.6em; font-weight: bold; color: #14532d; }
+
+        .content-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        
+        /* TABLE STYLE */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.95em; }
+        th { background-color: #f8fafc; color: #475569; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- ================= SIDEBAR MENU IBUMOSO ================= -->
+    <div class="sidebar">
+        <div class="side-top">
+            <h2>Applicant Portal</h2>
+            <div class="side-menu">
+                <a href="{% url 'index' %}">🏠 Home/Intego</a>
+                <a href="{% url 'members_list' %}">👥 Urutonde rw'Abaririmbyi</a>
+                <a href="{% url 'songs_list' %}">🎵 Urutonde rw'Indirimbo</a>
+                <a href="{% url 'contributions_list' %}" class="active">💰 Amaturo n'Imisanzu</a>
+            </div>
+        </div>
+       <!-- KUKOSORA PROFILE BOX NYAKURI KURI SIDEBAR -->
+<div class="side-user-box" style="padding: 15px 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 12px; background: #1e3a8a;">
+    <!-- Ifoto nshya y'ubwiza ikora nka dynamic live icon -->
+    <img src="https://dicebear.com{{ request.user.username }}" class="user-avatar" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid #60a5fa; background: #f8fafc; padding: 2px;" alt="Avatar">
+    <div class="user-info-mini" style="display: flex; flex-direction: column;">
+        <span class="user-names-mini" style="font-weight: bold; color: white; font-size: 0.95em; text-transform: capitalize;">{{ request.user.username }}</span>
+        <span style="font-size: 0.75em; color: #93c5fd; font-weight: 500;">🎭 Active Singer</span>
+    </div>
+</div>
+
+    </div>
+
+    <!-- ================= MAIN AREA IBURYO ================= -->
+    <div class="main-content">
+        <div class="top-navbar">
+            <div style="font-weight: bold; color: #334155;">Getsemani Choir — Financial Reports</div>
+        </div>
+
+        <!-- FORM FILTER DROPDOWN POWERED BY DJANGO BACKEND FORCED ACTION -->
+        <div class="filter-navbar">
+            <form method="GET" action="" style="display: flex; gap: 20px; align-items: flex-end; flex: 1;">
+                <div class="filter-group">
+                    <label>🔍 YUNGURURA MU BWOKO BW'UMUSANZU:</label>
+                    <!-- FORCE SUBMIT ACTION IHITA YOHEREZA FILTER AKO KANYA KURI ONCHANGE -->
+                    <select class="filter-select" name="purpose" onchange="this.form.submit()">
+                        <option value="all" {% if selected_purpose == 'all' or not selected_purpose %}selected{% endif %}>-- Cyane Yose (All Contributions) --</option>
+                        {% for item in totals_by_purpose %}
+                            <option value="{{ item.purpose }}" {% if selected_purpose == item.purpose %}selected{% endif %}>{{ item.purpose }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            
+            <button class="btn-download" onclick="downloadFilteredCSV()">
+                📥 Download
+            </button>
+        </div>
+
+        <!-- BOX Y'ISANDUKU (ISOMA AMAFARANGA AVUYE MU BWONKO BWA DJANGO DIRECTLY) -->
+        <div class="total-display-box">
+            <div class="total-left">
+                <h4>
+                    {% if selected_purpose == 'all' or not selected_purpose %}
+                        ISANDUKU YOSE HAMWE (GRAND TOTAL)
+                    {% else %}
+                        TOTAL Y'UMUSANZU WA: {{ selected_purpose|upper }}
+                    {% endif %}
+                </h4>
+                <div class="total-title-dynamic">{{ current_total|floatformat:"2" }} FRW</div>
+            </div>
+            <div style="background: #16a34a; color: white; padding: 10px 15px; border-radius: 6px; font-weight: bold; font-size: 0.9em;">
+                💰 Verified Cash
+            </div>
+        </div>
+
+        <!-- URUTONDE NYIRIZINA RW'IMISANZU Y'ABARIRIMBYI -->
+        <div class="content-card">
+            <table id="contributionsTable">
+                <thead>
+                    <tr>
+                        <th>Umuririmbyi</th>
+                        <th>Intego y'Ikintu (Purpose)</th>
+                        <th>Amafaranga yatanze</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contribution in contributions %}
+                        <tr class="contribution-row" data-purpose="{{ contribution.purpose }}" data-amount="{{ contribution.amount }}">
+                            <td class="row-name" style="font-weight: 500; color: #334155;">{{ contribution.member.name }}</td>
+                            <td class="row-purpose" style="color: #64748b; font-weight: bold;">{{ contribution.purpose }}</td>
+                            <td class="row-amount-text" style="font-weight: bold; color: #16a34a;">{{ contribution.amount|floatformat:"2" }} FRW</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style: italic;">Nta makuru y'imisanzu racyandikwa muli system.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <!-- JAVASCRIPT EXCEL REPORT DOWNLOAD ENGINE -->
+    <script>
+        function downloadFilteredCSV() {
+            const rows = document.querySelectorAll('.contribution-row');
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Umuririmbyi,Intego y'Ikintu (Purpose),Amafaranga yatanze (RWF)\n";
+
+            rows.forEach(row => {
+                const name = row.querySelector('.row-name').innerText;
+                const purpose = row.querySelector('.row-purpose').innerText;
+                const amount = row.getAttribute('data-amount');
+                csvContent += `"${name}","${purpose}",${parseFloat(amount).toFixed(2)}\n`;
+            });
+
+            csvContent += `\n"TOTAL YOSE HAMWE","",{{ current_total|floatformat:"2" }}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Raporo_Imisanzu_Getsemani.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+
+</body>
+</html>

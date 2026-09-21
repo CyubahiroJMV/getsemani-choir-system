@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chorale Getsemani - Urubuga rw'Abaririmbyi</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            color: #333; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            overflow: hidden; 
+            background-color: #5a6268; 
+        }
+        
+        /* NAVBAR HARUGURU */
+        .top-navbar { background: #1e3a8a; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10; }
+        .logo-title { color: white; margin: 0; font-size: 1.4em; font-weight: bold; }
+        .tabs-container { display: flex; gap: 10px; align-items: center; }
+        .nav-link-item { background: #2b6cb0; color: white; text-decoration: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; font-size: 0.95em; transition: 0.2s; display: inline-block; }
+        .nav-link-item:hover, .nav-link-item.active { background: #3b82f6; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-color: #3b82f6; }
+        .btn-admin { background: #ed8936; color: white; padding: 10px 18px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-left: 15px; }
+        .btn-admin:hover { background: #dd6b20; }
+
+        /* BODY LAYOUT FORMAT */
+        .body-container { 
+            flex: 1; 
+            display: flex; 
+            padding: 25px; 
+            gap: 76px; /* 2CM Z'UMWANYA NYAKURI HAGATI YA BOXES */
+            overflow: hidden; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        /* 1. IBUMOSO (600px) - PURE CSS AUTOMATIC FADE CAROUSEL */
+        .left-slider-section { 
+            width: 600px; 
+            height: 420px; 
+            position: relative;
+            background: #ffffff; 
+            border-radius: 12px; 
+            border: 1px solid #cbd5e1; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            padding: 35px;
+        }
+        
+        .left-slide-pane {
+            position: absolute;
+            width: calc(100% - 70px);
+            height: calc(100% - 70px);
+            top: 35px;
+            left: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            animation: cssFadeTimer 12s infinite ease-in-out;
+        }
+        .pane-vision { animation-delay: 6s; }
+
+        .left-slide-pane h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; font-size: 1.7em; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; }
+        .left-slide-pane p { font-size: 1.15em; font-style: italic; color: #1e293b; line-height: 1.6; margin: 0; font-weight: 500; text-align: center; }
+
+        /* 2. IBURYO (350px) - VERTICAL SONGS CAROUSEL ROW */
+        .right-static-section { 
+            width: 350px; 
+            height: 420px; 
+            background: #ffffff; 
+            border-radius: 12px; 
+            border: 1px solid #cbd5e1; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            padding: 25px; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .right-static-section h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 1.4em; }
+        
+        .songs-window { flex: 1; position: relative; overflow: hidden; }
+        .song-animated-card { 
+            position: absolute; 
+            width: 100%; 
+            top: 0; 
+            left: 0; 
+            display: none; 
+            animation: slideUpEffect 0.8s ease-in-out; 
+            height: 100%;
+        }
+        .song-animated-card.active { display: block; }
+
+        .song-snippet-item { 
+            background: #f8fafc; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 5px solid #ed8936; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+        }
+        .song-snippet-item h4 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+        .song-lyrics-box { flex: 1; overflow-y: auto; color: #475569; font-size: 0.95em; font-style: italic; line-height: 1.4; margin-bottom: 15px; text-align: left; }
+        
+        .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
+        .audio-player-element { width: 100%; height: 35px; }
+
+        @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
+        @keyframes slideUpEffect { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="top-navbar">
+        <div class="logo-title">GETSEMANI CHOIR</div>
+        <div class="tabs-container">
+            <a href="{% url 'index' %}" class="nav-link-item active">🏠 Home</a>
+            <a href="{% url 'members_list' %}" class="nav-link-item">👥 List Of Singer</a>
+            <a href="{% url 'songs_list' %}" class="nav-link-item">🎵 List Of Songs</a>
+            <a href="{% url 'contributions_list' %}" class="nav-link-item">💰 Contributions</a>
+            <a href="{% url 'login' %}" class="btn-admin">🔐 Admin Panel</a>
+        </div>
+    </div>
+
+    <div class="body-container" id="mainContainer" data-songs="{{ songs.count|default:0 }}">
+        <div class="left-slider-section">
+            <div class="left-slide-pane pane-intego">
+                <h2>🎯 Intego ya Korali Getsemani</h2>
+                <p>"Kwamamaza ubutumwa bwiza bwa Yesu Kristo binyuze mu ndirimbo, gufasha abantu kwegera Imana, no kwesa umuryango w'ishema ryo gusingiza Imana mu kuri n'umwuka."</p>
+            </div>
+            <div class="left-slide-pane pane-vision">
+                <h2>👁️ Vision ya Korali</h2>
+                <p>"Kuba umubumbe w'ishema ryo gusingiza Imana riremye, gufasha imitima y'abantu binyuze mu majwi n'indirimbo zihambaye, no gukwiza urukundo n'amahoro mu muryango mugari wa Gikristo ku isi yose."</p>
+            </div>
+        </div>
+
+        <div class="right-static-section">
+            <h2>🎵 Incamake y'Indirimbo</h2>
+            <div class="songs-window">
+                {% for song in songs %}
+                    <div class="song-animated-card {% if forloop.first %}active{% endif %}" id="right-slide-{{ forloop.counter0 }}">
+                        <div class="song-snippet-item">
+                            <div>
+                                <h4>{{ song.title }}</h4>
+                                <div class="song-lyrics-box">{{ song.lyrics|truncatewords:15 }}...</div>
+                            </div>
+                            
+                            <div class="audio-container">
+                                {% if song.audio_file %}
+                                    <!-- TWASHYIZEHO AUTOPLAY NA MUTED NGO BROWSER IYEMERE AKO KANYA -->
+                                    <audio controls autoplay muted class="audio-player-element" id="audio-{{ forloop.counter0 }}">
+                                        <source src="{{ song.audio_file.url }}" type="audio/mpeg">
+                                    </audio>
+                                {% else %}
+                                    <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">Nta Audio ihari.</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rightIndex = 0;
+        const container = document.getElementById('mainContainer');
+        const totalRight = container ? (parseInt(container.dataset.songs) || 0) : 0;
+        let rightTimer;
+
+        function showRightSlides() {
+            if (totalRight <= 1) return; 
+            
+            // Guhagarika indirimbo yari iri gukina mberi
+            let oldAudio = document.getElementById(`audio-${rightIndex}`);
+            if (oldAudio) { oldAudio.pause(); oldAudio.currentTime = 0; }
+
+            const currentCard = document.getElementById(`right-slide-${rightIndex}`);
+            if (currentCard) currentCard.classList.remove('active');
+            
+            rightIndex++;
+            if (rightIndex >= totalRight) { rightIndex = 0; }
+            
+            const nextCard = document.getElementById(`right-slide-${rightIndex}`);
+            if (nextCard) nextCard.classList.add('active');
+
+            // Gukina indirimbo nshya nshya yaje
+            let newAudio = document.getElementById(`audio-${rightIndex}`);
+            if (newAudio) { newAudio.play().catch(e => console.log("Autoplay blocked")); }
+            
+            rightTimer = setTimeout(showRightSlides, 6000);
+        }
+        if (totalRight > 1) { rightTimer = setTimeout(showRightSlides, 6000); }
+    </script>
+</body>
+</html>

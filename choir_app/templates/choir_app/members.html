@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Applicant Portal - Urutonde rw'Abaririmbyi</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f8fafc; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: #1e3a8a; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; }
+        .side-top h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3em; border-bottom: 1px solid #2563eb; padding-bottom: 15px; }
+        .side-menu a { padding: 12px 25px; color: #cbd5e1; text-decoration: none; display: block; font-weight: 600; font-size: 0.95em; }
+        .side-menu a.active, .side-menu a:hover { background: #2563eb; color: white; }
+        .side-user-box { padding: 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 45px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .top-navbar a { color: #1e3a8a; font-weight: bold; text-decoration: none; margin-right: 15px; }
+        .content-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        h3 { margin-top: 0; color: #1e3a8a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { background-color: #f8fafc; color: #475569; font-size: 0.9em; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="side-top">
+            <h2>Applicant Portal</h2>
+            <div class="side-menu">
+                <a href="{% url 'index' %}">🏠 Home/Intego</a>
+                <a href="{% url 'members_list' %}" class="active">👥 Urutonde rw'Abaririmbyi</a>
+                <a href="{% url 'songs_list' %}">🎵 Urutonde rw'Indirimbo</a>
+                <a href="{% url 'contributions_list' %}">💰 Amaturo n'Imisanzu</a>
+            </div>
+        </div>
+        <!-- KUKOSORA PROFILE BOX NYAKURI KURI SIDEBAR -->
+<div class="side-user-box" style="padding: 15px 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 12px; background: #1e3a8a;">
+    <!-- Ifoto nshya y'ubwiza ikora nka dynamic live icon -->
+    <img src="https://dicebear.com{{ request.user.username }}" class="user-avatar" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid #60a5fa; background: #f8fafc; padding: 2px;" alt="Avatar">
+    <div class="user-info-mini" style="display: flex; flex-direction: column;">
+        <span class="user-names-mini" style="font-weight: bold; color: white; font-size: 0.95em; text-transform: capitalize;">{{ request.user.username }}</span>
+        <span style="font-size: 0.75em; color: #93c5fd; font-weight: 500;">🎭 Active Singer</span>
+    </div>
+</div>
+
+    </div>
+    <div class="main-content">
+        <div class="top-navbar">
+            <div style="font-weight: bold; color: #334155;">Getsemani Choir</div>
+           
+        </div>
+        <div class="content-card">
+            <h3>👥 Urutonde rw'Abaririmbyi bose b'Ishema</h3>
+            <table>
+                <thead><tr><th>Amazina y'Umuririmbyi</th><th>Ijwi aririmba</th></tr></thead>
+                <tbody>
+                    {% for member in members %}
+                        <tr><td>{{ member.name }}</td><td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">{{ member.voice }}</span></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

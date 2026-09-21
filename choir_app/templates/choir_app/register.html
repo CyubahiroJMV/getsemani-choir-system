@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chorale Getsemani - Create Account</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            background-color: #f1f5f9; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+        }
+        
+        /* CARD BOX STYLING (MATCHES LOGIN ISURA) */
+        .register-container { 
+            width: 100%; 
+            max-width: 420px; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+            border: 1px solid #e2e8f0;
+        }
+        .register-header { 
+            background: #2b6cb0; 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .register-header h2 { margin: 0; font-size: 1.8em; font-weight: bold; }
+        .register-header p { margin: 5px 0 0 0; font-size: 0.9em; color: #ebf8ff; opacity: 0.9; }
+        
+        .register-body { padding: 30px; }
+        
+        /* INPUT FIELD STYLES */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #4a5568; font-size: 0.9em; }
+        .form-group input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.95em; }
+        .form-group input:focus { outline: none; border-color: #2563eb; background: white; }
+        
+        .btn-register { 
+            background: #2b6cb0; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 1em; 
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-register:hover { background: #1d4ed8; }
+        
+        .footer-link { text-align: center; margin-top: 20px; font-size: 0.9em; color: #718096; }
+        .footer-link a { color: #2b6cb0; font-weight: bold; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <div class="register-header">
+            <h2>Join Getsemani Choir</h2>
+            <p>Kwiyandikisha nka muryango cyangwa umuririmbyi mushya muli system</p>
+        </div>
+        
+        <div class="register-body">
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                <!-- DJANGO CHOSEN AUTOFIELDS OVERRIDE FOR STYLING -->
+                <div class="form-group">
+                    <label>Koresha Username (Izina winjiriraho):</label>
+                    <input type="text" name="username" placeholder="Andika username nshya..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address (Option):</label>
+                    <input type="email" name="email" placeholder="Andika email yawe...">
+                </div>
+
+                <div class="form-group">
+                    <label>Password (Ijambo ry'ibanga):</label>
+                    <input type="password" name="password" placeholder="Andika password ikomeye..." required>
+                </div>
+
+                <button type="submit" class="btn-register">Register Here ➔</button>
+            </form>
+            
+            <div class="footer-link">
+                Ufite konti isanzwe? <a href="{% url 'login' %}">Login Here</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

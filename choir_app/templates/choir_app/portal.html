@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Applicant Portal - Chorale Getsemani</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f8fafc; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* SIDEBAR DRAWER FORMAT YA POLICE */
+        .sidebar { width: 260px; background: #1e3a8a; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; }
+        .side-top h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3em; border-bottom: 1px solid #2563eb; padding-bottom: 15px; }
+        .side-menu a { padding: 12px 25px; color: #cbd5e1; text-decoration: none; display: block; font-weight: 600; font-size: 0.95em; }
+        .side-menu a.active, .side-menu a:hover { background: #2563eb; color: white; }
+        .side-user-box { padding: 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 45px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+        .user-names-mini { font-size: 0.9em; font-weight: bold; }
+        
+        /* MAIN BODY PARTS */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        
+        /* ANALYTICS CARDS (1, 1, 0, 0 FORMAT) */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .stat-num { font-size: 2.2em; font-weight: bold; color: #1e3a8a; margin-bottom: 5px; }
+        .stat-lbl { color: #64748b; font-size: 0.85em; font-weight: 600; text-transform: uppercase; }
+
+        .content-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        h3 { margin-top: 0; color: #1e3a8a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { background-color: #f8fafc; color: #475569; font-size: 0.9em; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR DRAWER NK'UKO SHUSHO ITEYE -->
+    <div class="sidebar">
+        <div class="side-top">
+            <h2>Getsemani Choir Portal</h2>
+            <div class="side-menu">
+                <a href="{% url 'member_portal' %}" class="active">📋 Applications</a>
+                <a href="{% url 'member_profile' %}">⚙️ Settings</a>
+            </div>
+        </div>
+        
+        <div class="side-user-box">
+            <img src="{{ member.photo_url }}" class="user-avatar" alt="Avatar">
+            <div class="user-info-mini">
+                <div class="user-names-mini">{{ member.name }}</div>
+                <div style="font-size: 0.75em; color: #94a3b8;">Applicant</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT AREA -->
+    <div class="main-content">
+        <div class="top-navbar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-weight: bold; color: #334155;">Getsemani Choir Dashboard</span>
+                <!-- Niba uyu muntu ari umuyobozi (is_staff) muhe akabuto kamwinjiza ku mafomu -->
+                {% if user.is_staff %}
+                    <a href="{% url 'admin_dashboard' %}" style="background: #ed8936; color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; text-decoration: none;">⚙️ Admin Forms Panel</a>
+                {% endif %}
+            </div>
+            <a href="{% url 'logout' %}" style="color: #ef4444; font-weight: bold; text-decoration: none; font-size: 0.9em;">Sign out ➔</a>
+        </div>
+
+
+        <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+            <h1 style="margin: 0; font-size: 1.8em; color: #1e3a8a;">Welcome back, Singer</h1>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Manage your applications and explore open programs.</p>
+        </div>
+
+        <!-- UTUZU TW'IMIBARE (1, 1, 0, 0 FORMAT NK'UKO SHUSHO ITEYE) -->
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-num">{{ songs_count }}</div><div class="stat-lbl">Total Songs</div></div>
+            <div class="stat-card"><div class="stat-num">{{ my_attendance_count }}</div><div class="stat-lbl">Attendance (Yaje)</div></div>
+            <div class="stat-card"><div class="stat-num">{{ my_total_money }}</div><div class="stat-lbl">Contributions (FRW)</div></div>
+            <div class="stat-card"><div class="stat-num">0</div><div class="stat-lbl">Accepted</div></div>
+        </div>
+
+        <!-- LIST ENTRYS -->
+        <div class="content-card">
+            <h3>🎵 Repertoire y'Izindirimbo (Lyrics)</h3>
+            <table>
+                <thead><tr><th>Indirimbo</th><th>Amagambo yazo (Lyrics Status)</th><th>Date</th></tr></thead>
+                <tbody>
+                    {% for song in songs %}
+                        <tr>
+                            <td><strong>{{ song.title }}</strong></td>
+                            <td style="color: #64748b; font-size: 0.9em; font-style: italic;">{{ song.lyrics|truncatewords:10 }}</td>
+                            <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">Submitted</span></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
