@@ -105,7 +105,7 @@
 
         .song-snippet-item { 
             background: #f8fafc; 
-            padding: 20px 15px; 
+            padding: 15px; 
             border-radius: 8px; 
             border-left: 5px solid #ed8936; 
             height: 100%; 
@@ -116,6 +116,10 @@
         }
         .song-snippet-item h4 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; width: 100%; }
         .song-lyrics-box { flex: 1; overflow-y: auto; color: #475569; font-size: 0.95em; font-style: italic; line-height: 1.4; text-align: center; margin-bottom: 10px; width: 100%; }
+        
+        /* AKAZU K'AUDIO PLAYER */
+        .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
+        .audio-player-element { width: 100%; height: 32px; outline: none; }
 
         @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
 
@@ -155,24 +159,36 @@
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (HANO JYA ISOMA DATA AVUYE MURI DATABASE NYAKURI) -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (HANO AUDIO IRABONEKA 100%) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
             <div class="songs-window">
                 {% for song in songs %}
-                    <!-- IYI CARD IRAHIYAKA KANDI ITERE LIVE KURI BURI NDIRIMBO IRI MURI DATABASE -->
                     <div class="song-animated-card {% if forloop.first %}active{% endif %}">
                         <div class="song-snippet-item">
                             <h4>{{ song.title }}</h4>
                             <div class="song-lyrics-box">"{{ song.lyrics|truncatewords:20 }}"</div>
+                            
+                            <!-- UTWUMA TW'AMA-AUDIO PLAYER ASANZWE YA DJANGO -->
+                            <div class="audio-container">
+                                {% if song.audio_file %}
+                                    <audio controls class="audio-player-element" id="audio-{{ forloop.counter0 }}">
+                                        <source src="{{ song.audio_file.url }}" type="audio/mpeg">
+                                    </audio>
+                                {% else %}
+                                    <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">❌ Nta Audio ihari.</span>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% empty %}
-                    <!-- Niba database ishyashya ari nsa, haza iyi ngiyi y'igereranyo ngo section we kwaka nsa -->
                     <div class="song-animated-card active">
                         <div class="song-snippet-item">
                             <h4>Urukundo rwa Yesu</h4>
                             <div class="song-lyrics-box">"Nta ndirimbo zanditswe muli database racyari muli system. Injira nka Admin utangire kuzi-upload-inga ubu!"</div>
+                            <div class="audio-container">
+                                <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">💡 No Audio Loaded</span>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
@@ -180,23 +196,22 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT AUTO-ROTATE ENGINE -->
+    <!-- JAVASCRIPT AUTOMATIC ROTATE & SYNCHRONIZED AUDIO CONTROLLER -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const cards = document.querySelectorAll('.song-animated-card');
-            if (cards.length <= 1) return; // Niba ari indirimbo 1 cyangwa ubusa, guma aho
+            if (cards.length <= 1) return; 
 
             let currentIndex = 0;
 
             function rotateSongs() {
-                cards[currentIndex].classList.remove('active');
-                currentIndex = (currentIndex + 1) % cards.length;
-                cards[currentIndex].classList.add('active');
-            }
+                // 1. Gufunga audio y'indirimbo ishaje iri kuva kuri screen
+                let oldAudio = document.getElementById(`audio-${currentIndex}`);
+                if (oldAudio) { 
+                    oldAudio.pause(); 
+                    oldAudio.currentTime = 0; 
+                }
 
-            // Gushyiraho umuvuduko ugenda utera buri masegonda 6 (6000ms) neza neza nka Left Section!
-            setInterval(rotateSongs, 6000);
-        });
-    </script>
-</body>
-</html>
+                // 2. Gukura ibimenyetso by'iyaka kuri card ya kera
+                cards[currentIndex].classList.remove('active');
+                
