@@ -70,14 +70,14 @@
             flex-direction: column;
             justify-content: center;
             opacity: 0;
-            animation: leftSectionFade 12s infinite ease-in-out;
+            animation: cssFadeTimer 12s infinite ease-in-out;
         }
         .pane-vision { animation-delay: 6s; }
 
         .left-slide-pane h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; font-size: 1.7em; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; text-align: center; }
         .left-slide-pane p { font-size: 1.15em; font-style: italic; color: #1e293b; line-height: 1.6; margin: 0; font-weight: 500; text-align: center; }
 
-        /* 2. IBURYO - SONGS CAROUSEL ROW (LIVE DYNAMIC DISPLAY) */
+        /* 2. IBURYO - SONGS CAROUSEL ROW */
         .right-static-section { 
             width: 380px; 
             height: 420px; 
@@ -92,22 +92,20 @@
         }
         .right-static-section h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 1.4em; text-align: center; }
         
-        .songs-window { flex: 1; position: relative; width: 100%; height: 100%; }
-        
+        .songs-window { flex: 1; position: relative; overflow: hidden; width: 100%; height: 100%; }
         .song-animated-card { 
             position: absolute; 
             width: 100%; 
-            height: 100%;
             top: 0; 
             left: 0; 
-            display: none; /* Bizacungwa na JavaScript itajegajega */
+            display: none; 
             height: 100%;
         }
         .song-animated-card.active { display: block; animation: slideUpEffect 0.6s ease-in-out; }
 
         .song-snippet-item { 
             background: #f8fafc; 
-            padding: 15px; 
+            padding: 20px 15px; 
             border-radius: 8px; 
             border-left: 5px solid #ed8936; 
             height: 100%; 
@@ -122,7 +120,7 @@
         .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
         .audio-player-element { width: 100%; height: 32px; outline: none; }
 
-        @keyframes leftSectionFade { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
+        @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
         @keyframes slideUpEffect { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
@@ -161,12 +159,11 @@
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (ISOMA DATABASE NYAKURI 100%) -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (ISOMA DATABASE KANDI IFITE AUTO-FALLBACK INDIRIMBO ZITERA) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
             <div class="songs-window">
                 {% for song in songs %}
-                    <!-- HANO ISOMA LIVE BURI NDIRIMBO IRI MURI DATABASE YAKO NYAKURI -->
                     <div class="song-animated-card {% if forloop.first %}active{% endif %}">
                         <div class="song-snippet-item">
                             <h4>{{ song.title }}</h4>
@@ -183,14 +180,19 @@
                         </div>
                     </div>
                 {% empty %}
-                    <!-- Niba database ishyashya ari nsa, haza iyi ngiyi y'igereranyo -->
+                    <!-- HANO NI HO SYSTEM INYURAMO KURI SCREEN YAWE NGO IKORE ROTATE AUTOMATIC INYURANYA -->
                     <div class="song-animated-card active">
                         <div class="song-snippet-item">
                             <h4>Urukundo rwa Yesu</h4>
-                            <div class="song-lyrics-box">"Nta ndirimbo zanditswe muli database racyari muli system. Injira nka Admin utangire kuzi-upload-inga ubu usesuye!"</div>
-                            <div class="audio-container">
-                                <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">💡 No Audio Loaded</span>
-                            </div>
+                            <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri y'umutima wacu ku gusingiza izina ryayo..."</div>
+                            <div class="audio-container"><span style="font-size:0.85em; color:#94a3b8;">🎧 Indirimbo ya mberi y'igereranyo</span></div>
+                        </div>
+                    </div>
+                    <div class="song-animated-card">
+                        <div class="song-snippet-item">
+                            <h4>Mesiya Umwami</h4>
+                            <div class="song-lyrics-box">"Haleluya ku Mwami w'amahoro, ubutumwa bwiza bukwiriye isi yose mu majwi n'indirimbo zihambaye..."</div>
+                            <div class="audio-container"><span style="font-size:0.85em; color:#94a3b8;">💡 Indirimbo ya kabiri y'igereranyo</span></div>
                         </div>
                     </div>
                 {% endfor %}
@@ -198,13 +200,6 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT HARD-CODED AUTO-ROTATE CONTROLLER (BUDASHOBORA KWANGA) -->
+    <!-- JAVASCRIPT ENGINE INYURANYA INDIRIMBO ZOSE ZIKAZA LIVE BURI MASEGONDA 6 -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const cards = document.querySelectorAll('.song-animated-card');
-            if (cards.length <= 1) return; // Niba ari indirimbo 1 cyangwa ubusa, igume aho ntizunguruke
-
-            let currentIndex = 0;
-
-            function rotateSongs() {
-                // Guhagarika audio y'indirimbo ishaje
