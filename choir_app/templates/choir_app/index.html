@@ -105,17 +105,17 @@
 
         .song-snippet-item { 
             background: #f8fafc; 
-            padding: 25px 15px; 
+            padding: 20px 15px; 
             border-radius: 8px; 
             border-left: 5px solid #ed8936; 
             height: 100%; 
             display: flex;
             flex-direction: column;
-            justify-content: center; 
+            justify-content: space-between; 
             align-items: center;
         }
-        .song-snippet-item h4 { margin: 0 0 12px 0; color: #1e3a8a; font-size: 1.3em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; width: 100%; }
-        .song-lyrics-box { color: #475569; font-size: 1.1em; font-style: italic; line-height: 1.5; text-align: center; }
+        .song-snippet-item h4 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; width: 100%; }
+        .song-lyrics-box { flex: 1; overflow-y: auto; color: #475569; font-size: 0.95em; font-style: italic; line-height: 1.4; text-align: center; margin-bottom: 10px; width: 100%; }
 
         @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
 
@@ -155,39 +155,37 @@
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (HANO CODE IRI DYNAMIC KANDI AUTOMATIC 100%) -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (HANO JYA ISOMA DATA AVUYE MURI DATABASE NYAKURI) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
             <div class="songs-window">
-                <!-- INDIRIMBO YA 1 -->
-                <div class="song-animated-card active">
-                    <div class="song-snippet-item">
-                        <h4>Indirimbo ya mberere</h4>
-                        <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri y'umutima wacu..."</div>
+                {% for song in songs %}
+                    <!-- IYI CARD IRAHIYAKA KANDI ITERE LIVE KURI BURI NDIRIMBO IRI MURI DATABASE -->
+                    <div class="song-animated-card {% if forloop.first %}active{% endif %}">
+                        <div class="song-snippet-item">
+                            <h4>{{ song.title }}</h4>
+                            <div class="song-lyrics-box">"{{ song.lyrics|truncatewords:20 }}"</div>
+                        </div>
                     </div>
-                </div>
-                <!-- INDIRIMBO YA 2 -->
-                <div class="song-animated-card">
-                    <div class="song-snippet-item">
-                        <h4>Urukundo rwa Yesu</h4>
-                        <div class="song-lyrics-box">"Urukundo rwawe ruratsinda amanywa n'ijoro, waduhaye ishema ryo kubaho..."</div>
+                {% empty %}
+                    <!-- Niba database ishyashya ari nsa, haza iyi ngiyi y'igereranyo ngo section we kwaka nsa -->
+                    <div class="song-animated-card active">
+                        <div class="song-snippet-item">
+                            <h4>Urukundo rwa Yesu</h4>
+                            <div class="song-lyrics-box">"Nta ndirimbo zanditswe muli database racyari muli system. Injira nka Admin utangire kuzi-upload-inga ubu!"</div>
+                        </div>
                     </div>
-                </div>
-                <!-- INDIRIMBO YA 3 -->
-                <div class="song-animated-card">
-                    <div class="song-snippet-item">
-                        <h4>Mesiya Umwami</h4>
-                        <div class="song-lyrics-box">"Haleluya ku Mwami w'amahoro, ubutumwa bwiza bukwiriye isi yose..."</div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT AUTO-ROTATE ENGINE BUDASHOBORA KWANGA NA RIME -->
+    <!-- JAVASCRIPT AUTO-ROTATE ENGINE -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const cards = document.querySelectorAll('.song-animated-card');
+            if (cards.length <= 1) return; // Niba ari indirimbo 1 cyangwa ubusa, guma aho
+
             let currentIndex = 0;
 
             function rotateSongs() {
