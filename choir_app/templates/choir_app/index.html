@@ -70,7 +70,7 @@
             flex-direction: column;
             justify-content: center;
             opacity: 0;
-            animation: cssFadeTimer 12s infinite ease-in-out;
+            animation: leftSectionFade 12s infinite ease-in-out;
         }
         .pane-vision { animation-delay: 6s; }
 
@@ -89,39 +89,43 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
         .right-static-section h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 1.4em; text-align: center; }
         
-        .songs-window { flex: 1; position: relative; overflow: hidden; width: 100%; height: 100%; }
+        .songs-window { flex: 1; position: relative; width: 100%; height: 100%; }
+        
         .song-animated-card { 
             position: absolute; 
             width: 100%; 
+            height: 100%;
             top: 0; 
             left: 0; 
             display: none; 
-            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out; /* Fade nziza ihamye muli browser */
         }
-        .song-animated-card.active { display: block; animation: slideUpEffect 0.6s ease-in-out; }
+        .song-animated-card.active { display: block; opacity: 1; }
 
         .song-snippet-item { 
             background: #f8fafc; 
-            padding: 20px 15px; 
+            padding: 25px 15px; 
             border-radius: 8px; 
             border-left: 5px solid #ed8936; 
             height: 100%; 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; 
+            justify-content: center; 
             align-items: center;
         }
-        .song-snippet-item h4 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; width: 100%; }
-        .song-lyrics-box { flex: 1; overflow-y: auto; color: #475569; font-size: 0.95em; font-style: italic; line-height: 1.4; text-align: center; margin-bottom: 10px; width: 100%; }
-        
-        .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
-        .audio-player-element { width: 100%; height: 32px; outline: none; }
+        .song-snippet-item h4 { margin: 0 0 15px 0; color: #1e3a8a; font-size: 1.4em; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; text-align: center; width: 100%; }
+        .song-lyrics-box { color: #475569; font-size: 1.1em; font-style: italic; line-height: 1.5; text-align: center; width: 100%; }
 
-        @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
-        @keyframes slideUpEffect { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes leftSectionFade { 
+            0%, 45% { opacity: 1; z-index: 2; } 
+            50%, 95% { opacity: 0; z-index: 1; } 
+            100% { opacity: 1; z-index: 2; } 
+        }
 
         @media (max-width: 768px) {
             .top-navbar { flex-direction: column; text-align: center; padding: 15px; }
@@ -155,51 +159,64 @@
             </div>
             <div class="left-slide-pane pane-vision">
                 <h2>👁️ Vision ya Korali</h2>
-                <p>"Kuba umubumbe w'ishema ryo gusingiza Imana riremye, gufasha imitima y'abantu binyuze mu majwi n'indirimbo zihambaye, no gukwiza urukundo n'amahoro mu muryango mugari wa Gikristo ku isi yose."</p>
+                <p>"Kuba umubumbe w'ishema ryo gusingiza Imana riremye, gufasha imitima y'abantu binyuze mu majwi n'indirimbo zihambaye, no gukwiza urukundo n'amahoro mu muryango mugari wa Gikristo ku isi yose."</p> 
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (ISOMA DATABASE KANDI IFITE AUTO-FALLBACK INDIRIMBO ZITERA) -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (YASUBIJWE KURI DATABASE NYAKURI 100%) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
             <div class="songs-window">
+                
                 {% for song in songs %}
-                    <div class="song-animated-card {% if forloop.first %}active{% endif %}">
+                    <!-- HANO SYSTEM ISIGAYE ISOMA BURI NDIRIMBO YAWE NYAKURI IRI MURI DATABASE GUSA -->
+                    <div class="song-animated-card backend-song-card-item">
                         <div class="song-snippet-item">
                             <h4>{{ song.title }}</h4>
                             <div class="song-lyrics-box">"{{ song.lyrics|truncatewords:20 }}"</div>
-                            <div class="audio-container">
-                                {% if song.audio_file %}
-                                    <audio controls class="audio-player-element" id="audio-{{ forloop.counter0 }}">
-                                        <source src="{{ song.audio_file.url }}" type="audio/mpeg">
-                                    </audio>
-                                {% else %}
-                                    <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">❌ Nta Audio ihari.</span>
-                                {% endif %}
-                            </div>
                         </div>
                     </div>
                 {% empty %}
-                    <!-- HANO NI HO SYSTEM INYURAMO KURI SCREEN YAWE NGO IKORE ROTATE AUTOMATIC INYURANYA -->
-                    <div class="song-animated-card active">
+                    <!-- Niba database iri nsa (muli Localhost), haza iyi ngiyi y'isuku ngo paji ye kwaka nsa -->
+                    <div class="song-animated-card active" style="display: block; opacity: 1;">
                         <div class="song-snippet-item">
-                            <h4>Urukundo rwa Yesu</h4>
-                            <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri y'umutima wacu ku gusingiza izina ryayo..."</div>
-                            <div class="audio-container"><span style="font-size:0.85em; color:#94a3b8;">🎧 Indirimbo ya mberi y'igereranyo</span></div>
-                        </div>
-                    </div>
-                    <div class="song-animated-card">
-                        <div class="song-snippet-item">
-                            <h4>Mesiya Umwami</h4>
-                            <div class="song-lyrics-box">"Haleluya ku Mwami w'amahoro, ubutumwa bwiza bukwiriye isi yose mu majwi n'indirimbo zihambaye..."</div>
-                            <div class="audio-container"><span style="font-size:0.85em; color:#94a3b8;">💡 Indirimbo ya kabiri y'igereranyo</span></div>
+                            <h4>Urubuga rwa Korali</h4>
+                            <div class="song-lyrics-box">"Nta ndirimbo zanditswe muli database racyari muli system. Nyura kuri Panel y'Ubuyobozi haruguru utangire kuzi-upload-inga ubu usesuye!"</div>
                         </div>
                     </div>
                 {% endfor %}
+
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT ENGINE INYURANYA INDIRIMBO ZOSE ZIKAZA LIVE BURI MASEGONDA 6 -->
+    <!-- JAVASCRIPT SLIDER ENGINE (BUDASHOBORA KWANGA KANDI ISOMA DATA NYAKURI) -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const cards = document.querySelectorAll('.backend-song-card-item');
+            if (cards.length === 0) return; // Niba database iri nsa, guma kuri empty message
+
+            // Kwatsa card ya mberere nyakuri
+            cards[0].classList.add('active');
+            let currentIndex = 0;
+
+            function rotateLiveSongs() {
+                if (cards.length <= 1) return;
+
+                // Gukura active kuri card ya kera
+                cards[currentIndex].classList.remove('active');
+
+                // Kubara index nshya ikurikiraho
+                currentIndex = (currentIndex + 1) % cards.length;
+
+                // Kwatsa card nshya
+                cards[currentIndex].classList.add('active');
+            }
+
+            // Gushyiraho umuvuduko ugenda utera buri masegonda 6 (6000ms) neza neza nka Left Section!
+            setInterval(rotateLiveSongs, 6000);
+        });
+    </script>
+
+</body>
+</html>
