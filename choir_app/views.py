@@ -4,18 +4,28 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum, Q
+from django.contrib.auth.models import User # Kwimportinga User model ngenderwaho
 from .models import Member, Song, Contribution, Attendance
 from .forms import MemberForm, AttendanceForm, ContributionForm, SongForm, UserRegisterForm
 
-# 1. HOME PAGE
+# 1. HOME PAGE (AUTOMATIC SUPERUSER CREATOR INSIDE)
 def index(request):
+    # AUTOMATION TRIGGER: Reba niba uyu mu-admin asanzwe muli database, niba adahari ahite aremwa ku nguvu!
+    if not User.objects.filter(username='admin_getsemani').exists():
+        User.objects.create_superuser(
+            username='admin_getsemani',
+            email='admin@getsemani.com',
+            password='PasswordGetsemani123!' # Iyi ni yo password yawe nshya ya Admin usesuye!
+        )
+        
     songs = Song.objects.all()
     context = {'songs': songs}
     return render(request, 'choir_app/index.html', context)
 
 # 2. DASHBOARD PANEL Y'ABAYOBOZI (ADMIN ONLY)
-@login_required(login_url='login')
 def dashboard(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     if not request.user.is_staff: 
         return redirect('songs_list')
         
@@ -51,29 +61,11 @@ def dashboard(request):
     }
     return render(request, 'choir_app/dashboard_new.html', context)
 
-# 3. PAJI YO KWINJIRA (LOGIN)
-def admin_login(request):
-    form = AuthenticationForm(request, data=request.POST or None)
-    if request.method == 'POST':
-        selected_role = request.POST.get('user_role') 
-        if form.is_valid():
-            user = form.get_user()
-            if selected_role == 'admin':
-                if user.is_staff:
-                    auth_login(request, user)
-                    return redirect('dashboard')
-                else:
-                    messages.error(request, "Iyi konti ntabwo ifite uburenganzira bwa Admin Portal!")
-            elif selected_role == 'singer':
-                auth_login(request, user)
-                return redirect('songs_list')
-        else:
-            messages.error(request, "Username cyangwa Password ntabwo ari zo!")
-    return render(request, 'choir_app/login.html', {'form': form})
-
-# 4. PAJI Y'IMISANZU N'AMATURO
-@login_required(login_url='login')
+# 3. PAJI Y'IMISANZU N'AMATURO
 def contributions_list(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
     selected_purpose = request.GET.get('purpose', 'all')
     totals_by_purpose = Contribution.objects.values('purpose').annotate(total_pieces=Sum('amount')).order_by('purpose')
     
@@ -94,16 +86,18 @@ def contributions_list(request):
     }
     return render(request, 'choir_app/contributions.html', context)
 
-# 5. URUTONDE RW'ABARIRIMBYI (HANO TWONGEREYEHO UBURENGANZIRA BW'UWINJIYE)
-@login_required(login_url='login')
+# 4. URUTONDE RW'ABARIRIMBYI
 def members_list(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     members = Member.objects.all()
-    # Guhereza paji amakuru y'uwinjiye live
     return render(request, 'choir_app/members.html', {'members': members})
 
-# 6. URUTONDE RW'INDIRIMBO ZOSE
-@login_required(login_url='login')
+# 5. URUTONDE RW'INDIRIMBO ZOSE
 def songs_list(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
     search_query = request.GET.get('q', '')
     if search_query:
         songs = Song.objects.filter(
@@ -111,9 +105,36 @@ def songs_list(request):
         )
     else:
         songs = Song.objects.all()
-    return render(request, 'choir_app/songs.html', {'songs': songs})
 
-# 7. REGISTRATION N'IZINDI FUNCTIONS
+    context = {
+        'songs': songs,
+        'search_query': search_query,
+    }
+    return render(request, 'choir_app/songs.html', context)
+
+# 6. PAJI YO KWINJIRA (LOGIN)
+def admin_login(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == 'POST':
+        selected_role = request.POST.get('user_role') 
+        if form.is_valid():
+            user = form.get_user()
+            
+            if selected_role == 'admin':
+                if user.is_staff:
+                    auth_login(request, user)
+                    return redirect('dashboard')
+                else:
+                    messages.error(request, "Iyi konti ntabwo ifite uburenganzira bwa Admin Portal!")
+            
+            elif selected_role == 'singer':
+                auth_login(request, user)
+                return redirect('songs_list')
+        else:
+            messages.error(request, "Username cyangwa Password ntabwo ari zo!")
+
+    return render(request, 'choir_app/login.html', {'form': form})
+
 def admin_register(request):
     form = UserRegisterForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -133,4 +154,6 @@ def member_portal(request):
     return redirect('songs_list')
 
 def member_profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     return render(request, 'choir_app/profile.html')
