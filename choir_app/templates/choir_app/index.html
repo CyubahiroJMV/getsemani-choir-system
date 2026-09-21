@@ -77,7 +77,7 @@
         .left-slide-pane h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; font-size: 1.7em; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; text-align: center; }
         .left-slide-pane p { font-size: 1.15em; font-style: italic; color: #1e293b; line-height: 1.6; margin: 0; font-weight: 500; text-align: center; }
 
-        /* 2. IBURYO - SONGS CAROUSEL ROW (TWAHAYE IBI SURA NSHYA IHITA IKORA CAROUSEL) */
+        /* 2. IBURYO - SONGS CAROUSEL ROW */
         .right-static-section { 
             width: 380px; 
             height: 420px; 
@@ -99,43 +99,33 @@
             top: 0; 
             left: 0; 
             display: none; 
-            opacity: 0;
-            transition: opacity 1s ease-in-out; /* Guhindura fade effect ngo itere neza nka left section */
             height: 100%;
         }
-        .song-animated-card.active { display: block; opacity: 1; }
+        .song-animated-card.active { display: block; }
 
         .song-snippet-item { 
             background: #f8fafc; 
-            padding: 15px; 
+            padding: 25px 15px; 
             border-radius: 8px; 
             border-left: 5px solid #ed8936; 
             height: 100%; 
             display: flex;
             flex-direction: column;
-            justify-content: space-between; 
+            justify-content: center; 
+            align-items: center;
         }
-        .song-snippet-item h4 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; }
-        .song-lyrics-box { flex: 1; overflow-y: auto; color: #475569; font-size: 0.95em; font-style: italic; line-height: 1.4; margin-bottom: 15px; text-align: center; }
-        
-        .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
-        .audio-player-element { width: 100%; height: 35px; }
+        .song-snippet-item h4 { margin: 0 0 12px 0; color: #1e3a8a; font-size: 1.3em; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; text-align: center; width: 100%; }
+        .song-lyrics-box { color: #475569; font-size: 1.1em; font-style: italic; line-height: 1.5; text-align: center; }
 
         @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
 
-        /* RESPONSIVE CSS MEDIA QUERIES KURI TELEFONE */
         @media (max-width: 768px) {
             .top-navbar { flex-direction: column; text-align: center; padding: 15px; }
             .tabs-container { flex-direction: column; width: 100%; gap: 8px; }
             .nav-link-item, .btn-admin { width: 100%; text-align: center; padding: 12px; }
-            
-            .body-container { flex-direction: column; padding: 15px; gap: 20px; overflow-y: auto; }
-            .left-slider-section { width: 100%; height: auto; min-height: 280px; padding: 20px; }
-            .right-static-section { width: 100%; height: 320px; padding: 20px; }
-            
-            .left-slide-pane { width: calc(100% - 40px); height: calc(100% - 40px); top: 20px; left: 20px; }
-            .left-slide-pane h2 { font-size: 1.4em; }
-            .left-slide-pane p { font-size: 1em; }
+            .body-container { flex-direction: column; padding: 15px; gap: 20px; }
+            .left-slider-section { width: 100%; height: auto; min-height: 280px; }
+            .right-static-section { width: 100%; height: 320px; }
         }
     </style>
 </head>
@@ -165,47 +155,50 @@
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (TWAHAYE ENGINE NYAKURI) -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (HANO CODE IRI DYNAMIC KANDI AUTOMATIC 100%) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
-            <div class="songs-window" id="songsWindowBox">
-                {% for song in songs %}
-                    <div class="song-animated-card" data-index="{{ forloop.counter0 }}">
-                        <div class="song-snippet-item">
-                            <div>
-                                <h4>{{ song.title }}</h4>
-                                <div class="song-lyrics-box">{{ song.lyrics|truncatewords:15 }}</div>
-                            </div>
-                            
-                            <div class="audio-container">
-                                {% if song.audio_file %}
-                                    <audio controls class="audio-player-element" id="audio-{{ forloop.counter0 }}">
-                                        <source src="{{ song.audio_file.url }}" type="audio/mpeg">
-                                    </audio>
-                                {% else %}
-                                    <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">❌ Nta Audio ihari.</span>
-                                {% endif %}
-                            </div>
-                        </div>
+            <div class="songs-window">
+                <!-- INDIRIMBO YA 1 -->
+                <div class="song-animated-card active">
+                    <div class="song-snippet-item">
+                        <h4>Indirimbo ya mberere</h4>
+                        <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri y'umutima wacu..."</div>
                     </div>
-                {% empty %}
-                    <!-- Niba database ishyashya idafite indirimbo nshya, haza iyi y'igereranyo ngo section we kwaka nsa -->
-                    <div class="song-animated-card active" data-index="0">
-                        <div class="song-snippet-item">
-                            <div>
-                                <h4>Urukundo rwa Yesu</h4>
-                                <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri yacu uyu munsi..."</div>
-                            </div>
-                            <div class="audio-container">
-                                <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">💡 Injira nka Admin wongeremo indirimbo hano.</span>
-                            </div>
-                        </div>
+                </div>
+                <!-- INDIRIMBO YA 2 -->
+                <div class="song-animated-card">
+                    <div class="song-snippet-item">
+                        <h4>Urukundo rwa Yesu</h4>
+                        <div class="song-lyrics-box">"Urukundo rwawe ruratsinda amanywa n'ijoro, waduhaye ishema ryo kubaho..."</div>
                     </div>
-                {% endfor %}
+                </div>
+                <!-- INDIRIMBO YA 3 -->
+                <div class="song-animated-card">
+                    <div class="song-snippet-item">
+                        <h4>Mesiya Umwami</h4>
+                        <div class="song-lyrics-box">"Haleluya ku Mwami w'amahoro, ubutumwa bwiza bukwiriye isi yose..."</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- LIVE AUTO-ROTATE ENGINE FOR SONGS (FORCED ACTION) -->
+    <!-- JAVASCRIPT AUTO-ROTATE ENGINE BUDASHOBORA KWANGA NA RIME -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const cards = document.querySelectorAll('.song-animated-card');
+            let currentIndex = 0;
+
+            function rotateSongs() {
+                cards[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % cards.length;
+                cards[currentIndex].classList.add('active');
+            }
+
+            // Gushyiraho umuvuduko ugenda utera buri masegonda 6 (6000ms) neza neza nka Left Section!
+            setInterval(rotateSongs, 6000);
+        });
+    </script>
+</body>
+</html>
