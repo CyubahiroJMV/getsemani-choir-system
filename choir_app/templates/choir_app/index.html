@@ -70,14 +70,14 @@
             flex-direction: column;
             justify-content: center;
             opacity: 0;
-            animation: cssFadeTimer 12s infinite ease-in-out;
+            animation: leftSectionFade 12s infinite ease-in-out;
         }
         .pane-vision { animation-delay: 6s; }
 
         .left-slide-pane h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; font-size: 1.7em; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; text-align: center; }
         .left-slide-pane p { font-size: 1.15em; font-style: italic; color: #1e293b; line-height: 1.6; margin: 0; font-weight: 500; text-align: center; }
 
-        /* 2. IBURYO - SONGS CAROUSEL ROW */
+        /* 2. IBURYO - SONGS CAROUSEL ROW (PURE CSS AUTOMATIC FADE) */
         .right-static-section { 
             width: 380px; 
             height: 420px; 
@@ -89,19 +89,24 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
-        .right-static-section h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 1.4em; text-align: center; }
+        .right-static-section h2 { color: #1e3a8a; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; font-size: 1.4em; text-align: center; z-index: 5; }
         
-        .songs-window { flex: 1; position: relative; overflow: hidden; }
+        .songs-window { flex: 1; position: relative; width: 100%; height: 100%; }
+        
         .song-animated-card { 
             position: absolute; 
             width: 100%; 
+            height: 100%;
             top: 0; 
             left: 0; 
-            display: none; 
-            height: 100%;
+            opacity: 0;
+            animation: rightSongsFade 12s infinite ease-in-out; /* Ikorera ku muvuduko usesuye neza */
         }
-        .song-animated-card.active { display: block; }
+        /* Gupanga delays ku ndirimbo zombi ngo zihinduranye live na left section */
+        .song-card-0 { animation-delay: 0s; }
+        .song-card-1 { animation-delay: 6s; }
 
         .song-snippet-item { 
             background: #f8fafc; 
@@ -120,7 +125,17 @@
         .audio-container { width: 100%; padding-top: 5px; border-top: 1px dashed #cbd5e1; }
         .audio-player-element { width: 100%; height: 32px; outline: none; }
 
-        @keyframes cssFadeTimer { 0%, 45% { opacity: 1; z-index: 2; } 50%, 95% { opacity: 0; z-index: 1; } 100% { opacity: 1; z-index: 2; } }
+        /* TIMING ANIMATIONS Z'UBUHANGA ZISIMBURANA NEZA */
+        @keyframes leftSectionFade { 
+            0%, 45% { opacity: 1; z-index: 2; } 
+            50%, 95% { opacity: 0; z-index: 1; } 
+            100% { opacity: 1; z-index: 2; } 
+        }
+        @keyframes rightSongsFade { 
+            0%, 45% { opacity: 1; z-index: 2; } 
+            50%, 95% { opacity: 0; z-index: 1; } 
+            100% { opacity: 1; z-index: 2; } 
+        }
 
         @media (max-width: 768px) {
             .top-navbar { flex-direction: column; text-align: center; padding: 15px; }
@@ -158,65 +173,36 @@
             </div>
         </div>
 
-        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO -->
+        <!-- 2. IBURYO: INCAMAKE Y'INDIRIMBO (PURE CSS - IDASHOBORA GUHAGARARA) -->
         <div class="right-static-section">
             <h2>🎵 Incamake y'Indirimbo</h2>
             <div class="songs-window">
-                {% for song in songs %}
-                    <div class="song-animated-card">
-                        <div class="song-snippet-item">
-                            <h4>{{ song.title }}</h4>
-                            <div class="song-lyrics-box">"{{ song.lyrics|truncatewords:20 }}"</div>
-                            
-                            <div class="audio-container">
-                                {% if song.audio_file %}
-                                    <audio controls class="audio-player-element" id="audio-{{ forloop.counter0 }}">
-                                        <source src="{{ song.audio_file.url }}" type="audio/mpeg">
-                                    </audio>
-                                {% else %}
-                                    <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">❌ Nta Audio ihari.</span>
-                                {% endif %}
-                            </div>
+                
+                <!-- INDIRIMBO YA 1 -->
+                <div class="song-animated-card song-card-0">
+                    <div class="song-snippet-item">
+                        <h4>Urukundo rwa Yesu</h4>
+                        <div class="song-lyrics-box">"Gusingiza Imana mu kuri n'umwuka, niyo ntego nyakuri y'umutima wacu uyu munsi..."</div>
+                        <div class="audio-container">
+                            <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">🎧 Injira ngo uze kureba Repertoire yose</span>
                         </div>
                     </div>
-                {% empty %}
-                    <div class="song-animated-card">
-                        <div class="song-snippet-item">
-                            <h4>Urukundo rwa Yesu</h4>
-                            <div class="song-lyrics-box">"Nta ndirimbo zanditswe muli database racyari muli system. Injira nka Admin utangire kuzi-upload-inga ubu!"</div>
-                            <div class="audio-container">
-                                <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">💡 No Audio Loaded</span>
-                            </div>
+                </div>
+
+                <!-- INDIRIMBO YA 2 -->
+                <div class="song-animated-card song-card-1">
+                    <div class="song-snippet-item">
+                        <h4>Mesiya Umwami</h4>
+                        <div class="song-lyrics-box">"Haleluya ku Mwami w'amahoro, ubutumwa bwiza bukwiriye isi yose mu ndirimbo zihambaye..."</div>
+                        <div class="audio-container">
+                            <span style="font-size: 0.85em; color: #94a3b8; font-style: italic; display:block; text-align:center;">💡 Nyura kuri Panel y'Ubuyobozi</span>
                         </div>
                     </div>
-                {% endfor %}
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT FIXED ENGINE (BUDASHOBORA KWANGA) -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const cards = document.querySelectorAll('.song-animated-card');
-            if (cards.length === 0) return;
-
-            // KUKOSORA: Kwatsa card ya mberere mu buryo usesuye neza
-            cards[0].classList.add('active');
-            let currentIndex = 0;
-
-            function rotateSongs() {
-                if (cards.length <= 1) return;
-
-                // Guhagarika audio y'indirimbo ishaje
-                let oldAudio = document.getElementById(`audio-${currentIndex}`);
-                if (oldAudio) { 
-                    oldAudio.pause(); 
-                    oldAudio.currentTime = 0; 
-                }
-
-                // Gukura active kuri card ya kera
-                cards[currentIndex].classList.remove('active');
-                
-                // Guhindura index
-                currentIndex = (currentIndex + 1) % cards.length;
-                
+</body>
+</html>
