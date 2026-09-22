@@ -19,4 +19,8 @@ urlpatterns = [
     path('login/', views.admin_login, name='login'),
     path('logout/', views.admin_logout, name='logout'),
     path('register/', views.admin_register, name='register'),
+
+    path('delete-song/<int:song_id>/', views.delete_song, name='delete_song'),
+    path('edit-song/<int:song_id>/', views.edit_song, name='edit_song'),
+
 ]

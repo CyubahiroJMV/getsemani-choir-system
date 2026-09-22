@@ -157,3 +157,26 @@ def member_profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'choir_app/profile.html')
+
+# AUTOMATIC DELETE FUNCTION FOR SONGS
+@login_required(login_url='/login/')
+def delete_song(request, song_id):
+    if not request.user.is_staff:
+        return redirect('songs_list')
+    song = Song.objects.get(id=song_id)
+    song.delete()
+    messages.success(request, f"Indirimbo '{song.title}' yasibwe burundu muli Repertoire!")
+    return redirect('dashboard')
+
+# AUTOMATIC EDIT FUNCTION FOR SONGS
+@login_required(login_url='/login/')
+def edit_song(request, song_id):
+    if not request.user.is_staff:
+        return redirect('songs_list')
+    song = Song.objects.get(id=song_id)
+    form = SongForm(request.POST or None, request.FILES or None, instance=song)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, f"Indirimbo '{song.title}' yavuguruwe neza usesuye!")
+        return redirect('dashboard')
+    return render(request, 'choir_app/edit_song.html', {'form': form, 'song': song})
