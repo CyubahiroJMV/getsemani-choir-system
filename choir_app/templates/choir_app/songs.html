@@ -72,11 +72,12 @@
             🎵 Repository y'Indirimbo (Lyrics Status)
         </h2>
 
-        <!-- SEARCH BAR AREA -->
-        <form method="GET" action="" class="search-container" style="display: flex; gap: 15px; margin-bottom: 25px; width: 100%; max-width: 700px;">
-            <input type="text" name="q" class="search-input" value="{{ search_query }}" placeholder="Shakisha indirimbo hano (Andika izina cyangwa amagambo)..." style="flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95em; background: white;">
-            <button type="submit" class="btn-search" style="background: #ed8936; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Shakisha</button>
-        </form>
+       <!--  FOMU NKURU Y'ISHAKISHA (FIXED NAME="Q" PARAMETER OVERRIDE) -->
+<form method="GET" action="{% url 'songs_list' %}" style="display: flex; gap: 10px; margin-bottom: 25px;">
+    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Shakisha indirimbo hano (Andika izina cyangwa amagambo)..." style="flex: 1; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em; outline: none;">
+    <button type="submit" style="background: #ed8936; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em;">Shakisha</button>
+</form>
+
 
         <!-- LIST OF ALL SONGS WITH AUDIOS -->
         <div class="songs-list-container">

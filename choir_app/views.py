@@ -62,10 +62,20 @@ def members_list(request):
     members = Member.objects.all()
     return render(request, 'choir_app/members.html', {'members': members})
 
+# 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
 def songs_list(request):
     songs = Song.objects.all()
-    return render(request, 'choir_app/songs.html', {'songs': songs})
+    
+    # KUKOSORA: Kwakira live amakuru yanditswe muli akazu ka Search (q parameter)
+    query = request.GET.get('q')
+    
+    if query:
+        # Ibi bishakisha niba ririya jambo riri muli Title cyangwa muli Lyrics (icya rimwe)
+        songs = songs.filter(title__icontains=query) | songs.filter(lyrics__icontains=query)
+        
+    return render(request, 'choir_app/songs.html', {'songs': songs, 'query': query})
+
 
 @login_required(login_url='/login/')
 def contributions_list(request):
