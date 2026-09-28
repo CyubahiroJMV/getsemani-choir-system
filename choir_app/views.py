@@ -1,182 +1,185 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from django.db.models import Sum, Q
-from django.contrib.auth.models import User # Kwimportinga User model ngenderwaho
-from .models import Member, Song, Contribution, Attendance
-from .forms import MemberForm, AttendanceForm, ContributionForm, SongForm, UserRegisterForm
+from django.contrib.auth.models import User
+from .models import Member, Song, Contribution
+from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 
-# 1. HOME PAGE (AUTOMATIC SUPERUSER CREATOR INSIDE)
+# 1. HOME PAGE
 def index(request):
-    # AUTOMATION TRIGGER: Reba niba uyu mu-admin asanzwe muli database, niba adahari ahite aremwa ku nguvu!
-    if not User.objects.filter(username='admin_getsemani').exists():
-        User.objects.create_superuser(
-            username='admin_getsemani',
-            email='admin@getsemani.com',
-            password='PasswordGetsemani123!' # Iyi ni yo password yawe nshya ya Admin usesuye!
-        )
-        
     songs = Song.objects.all()
-    context = {'songs': songs}
-    return render(request, 'choir_app/index.html', context)
+    return render(request, 'choir_app/index.html', {'songs': songs})
 
-# 2. DASHBOARD PANEL Y'ABAYOBOZI (ADMIN ONLY)
+# 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: ABSOLUTE ADMIN ACCURACY LOCK)
+@login_required(login_url='/login/')
 def dashboard(request):
-    if not request.user.is_authenticated:
+    # KUKOSORA: Gukumira umuser wese usanzwe ku nguvu z'amategeko (Izina rya admin_getsemani ryo ryahembwa rishobora kwinjira)
+    if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
+        logout(request) # Guhita asohorwa muli system mfuruka y'imbere (Strict Terminate)
+        messages.error(request, "Ntabwo mufite uburenganzira bw'Ubuyobozi bwo kureba iyi Panel!")
         return redirect('login')
-    if not request.user.is_staff: 
-        return redirect('songs_list')
         
     members = Member.objects.all()
     songs = Song.objects.all()
+    contributions = Contribution.objects.all()
+    
     member_form = MemberForm(request.POST or None)
-    attendance_form = AttendanceForm(request.POST or None)
     contribution_form = ContributionForm(request.POST or None)
     
     if request.method == 'POST' and 'add_song' in request.POST:
         song_form = SongForm(request.POST, request.FILES)
         if song_form.is_valid():
             song_form.save()
-            return redirect('dashboard')
+            messages.success(request, "Indirimbo nshya yamaze kwinjira muli Repertoire!")
+            return redirect('/panel/')
     else:
         song_form = SongForm()
     
     if request.method == 'POST':
         if 'add_member' in request.POST and member_form.is_valid():
             member_form.save()
-            return redirect('dashboard')
+            messages.success(request, "Umuririmbyi mushya yanditswe neza usesuye!")
+            return redirect('/panel/')
         elif 'add_contribution' in request.POST and contribution_form.is_valid():
             contribution_form.save()
-            return redirect('dashboard')
+            messages.success(request, "Umusanzu mushya winjijwe neza usesuye!")
+            return redirect('/panel/')
 
     context = {
         'members': members,
         'songs': songs,
+        'contributions': contributions,
         'member_form': member_form,
-        'attendance_form': attendance_form,
         'contribution_form': contribution_form,
         'song_form': song_form,
     }
     return render(request, 'choir_app/dashboard_new.html', context)
 
-# 3. PAJI Y'IMISANZU N'AMATURO
-def contributions_list(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
-    selected_purpose = request.GET.get('purpose', 'all')
-    totals_by_purpose = Contribution.objects.values('purpose').annotate(total_pieces=Sum('amount')).order_by('purpose')
-    
-    if selected_purpose == 'all' or not selected_purpose:
-        contributions = Contribution.objects.all()
-        total_data = contributions.aggregate(Sum('amount'))
-        current_total = total_data['amount__sum'] or 0
-    else:
-        contributions = Contribution.objects.filter(purpose=selected_purpose)
-        total_data = contributions.aggregate(Sum('amount'))
-        current_total = total_data['amount__sum'] or 0
-
-    context = {
-        'contributions': contributions,
-        'totals_by_purpose': totals_by_purpose,
-        'selected_purpose': selected_purpose,
-        'current_total': current_total,
-    }
-    return render(request, 'choir_app/contributions.html', context)
-
-# 4. URUTONDE RW'ABARIRIMBYI
+# 3. LIST VIEWS FOR USERS
+@login_required(login_url='/login/')
 def members_list(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
     members = Member.objects.all()
     return render(request, 'choir_app/members.html', {'members': members})
 
-# 5. URUTONDE RW'INDIRIMBO ZOSE
+@login_required(login_url='/login/')
 def songs_list(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-        
-    search_query = request.GET.get('q', '')
-    if search_query:
-        songs = Song.objects.filter(
-            Q(title__icontains=search_query) | Q(lyrics__icontains=search_query)
-        )
-    else:
-        songs = Song.objects.all()
+    songs = Song.objects.all()
+    return render(request, 'choir_app/songs.html', {'songs': songs})
 
+@login_required(login_url='/login/')
+def contributions_list(request):
+    contributions = Contribution.objects.all()
+    members = Member.objects.all()
+    purposes = Contribution.objects.values_list('purpose', flat=True).distinct()
+    member_id = request.GET.get('member')
+    selected_purpose = request.GET.get('purpose')
+    if member_id: contributions = contributions.filter(member_id=member_id)
+    if selected_purpose: contributions = contributions.filter(purpose=selected_purpose)
     context = {
-        'songs': songs,
-        'search_query': search_query,
+        'contributions': contributions,
+        'members': members,
+        'purposes': purposes,
+        'selected_member': int(member_id) if member_id and member_id.isdigit() else None,
+        'selected_purpose': selected_purpose
     }
-    return render(request, 'choir_app/songs.html', context)
+    return render(request, 'choir_app/contributions.html', context)
 
-# 6. PAJI YO KWINJIRA (LOGIN)
-def admin_login(request):
-    form = AuthenticationForm(request, data=request.POST or None)
-    if request.method == 'POST':
-        selected_role = request.POST.get('user_role') 
-        if form.is_valid():
-            user = form.get_user()
-            
-            if selected_role == 'admin':
-                if user.is_staff:
-                    auth_login(request, user)
-                    return redirect('dashboard')
-                else:
-                    messages.error(request, "Iyi konti ntabwo ifite uburenganzira bwa Admin Portal!")
-            
-            elif selected_role == 'singer':
-                auth_login(request, user)
-                return redirect('songs_list')
-        else:
-            messages.error(request, "Username cyangwa Password ntabwo ari zo!")
-
-    return render(request, 'choir_app/login.html', {'form': form})
-
-def admin_register(request):
-    form = UserRegisterForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        user = form.save(commit=False)
-        user.set_password(form.cleaned_data['password'])
-        user.is_staff = False
-        user.is_superuser = False
-        user.save()
-        return redirect('login')
-    return render(request, 'choir_app/register.html', {'form': form})
-
-def admin_logout(request):
-    auth_logout(request)
-    return redirect('index')
-
-def member_portal(request):
-    return redirect('songs_list')
-
-def member_profile(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    return render(request, 'choir_app/profile.html')
-
-# AUTOMATIC DELETE FUNCTION FOR SONGS
+# 4. EDIT & DELETE ACTIONS FOR SONGS
 @login_required(login_url='/login/')
 def delete_song(request, song_id):
-    if not request.user.is_staff:
-        return redirect('songs_list')
-    song = Song.objects.get(id=song_id)
-    song.delete()
-    messages.success(request, f"Indirimbo '{song.title}' yasibwe burundu muli Repertoire!")
-    return redirect('dashboard')
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
+    Song.objects.get(id=song_id).delete()
+    return redirect('/panel/')
 
-# AUTOMATIC EDIT FUNCTION FOR SONGS
 @login_required(login_url='/login/')
 def edit_song(request, song_id):
-    if not request.user.is_staff:
-        return redirect('songs_list')
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
     song = Song.objects.get(id=song_id)
     form = SongForm(request.POST or None, request.FILES or None, instance=song)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        messages.success(request, f"Indirimbo '{song.title}' yavuguruwe neza usesuye!")
-        return redirect('dashboard')
+        return redirect('/panel/')
     return render(request, 'choir_app/edit_song.html', {'form': form, 'song': song})
+
+# 5. EDIT & DELETE ACTIONS FOR MEMBERS
+@login_required(login_url='/login/')
+def delete_member(request, member_id):
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
+    Member.objects.get(id=member_id).delete()
+    return redirect('/panel/')
+
+@login_required(login_url='/login/')
+def edit_member(request, member_id):
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
+    member = Member.objects.get(id=member_id)
+    form = MemberForm(request.POST or None, instance=member)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('/panel/')
+    return render(request, 'choir_app/edit_member.html', {'form': form, 'member': member})
+
+# 6. EDIT & DELETE ACTIONS FOR CONTRIBUTIONS
+@login_required(login_url='/login/')
+def delete_contribution(request, contribution_id):
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
+    Contribution.objects.get(id=contribution_id).delete()
+    return redirect('/panel/')
+
+@login_required(login_url='/login/')
+def edit_contribution(request, contribution_id):
+    if request.user.username != 'admin_getsemani': return redirect('songs_list')
+    contribution = Contribution.objects.get(id=contribution_id)
+    form = ContributionForm(request.POST or None, instance=contribution)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('/panel/')
+    return render(request, 'choir_app/edit_contribution.html', {'form': form, 'contribution': contribution})
+
+# 7. MASTER AUTHENTICATION MODULE (STRICT PRIVILEGE CONTROL OVERRIDE)
+def admin_login(request):
+    form = AdminLoginForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
+        selected_role = request.POST.get('role')
+        
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            # 1. Kwinjira nka Admin
+            if selected_role == 'admin':
+                if username == 'admin_getsemani' or user.is_superuser:
+                    # Gushyiraho imfunguzo muli database ku nguvu niba izina rya admin ryicaye neza
+                    if not user.is_staff:
+                        user.is_staff = True
+                        user.is_superuser = True
+                        user.save()
+                    login(request, user)
+                    return redirect('dashboard')
+                else:
+                    # Niba ari umuririmbyi usanzwe wagerageje guhitamo Admin, system iramukumira (Hard Lock)
+                    messages.error(request, "Ntabwo mufite uburenganzira bw'Ubuyobozi (Admin) muli iyi system!")
+                    return redirect('login')
+            # 2. Kwinjira nk'Umuririmbyi usanzwe (Singer)
+            else:
+                login(request, user)
+                return redirect('songs_list')
+        else:
+            messages.error(request, "Username cyangwa Password ntabwo ari zo!")
+            
+    return render(request, 'choir_app/login.html', {'form': form})
+
+def admin_register(request):
+    form = AdminRegisterForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.save(commit=False)
+        user.is_staff = False
+        user.is_superuser = False
+        user.save()
+        login(request, user)
+        return redirect('songs_list')
+    return render(request, 'choir_app/register.html', {'form': form})
+
+def admin_logout(request):
+    logout(request)
+    return redirect('login')

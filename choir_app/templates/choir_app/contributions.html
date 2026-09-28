@@ -76,18 +76,40 @@
 
         <!-- FORM FILTER DROPDOWN POWERED BY DJANGO BACKEND FORCED ACTION -->
         <div class="filter-navbar">
-            <form method="GET" action="" style="display: flex; gap: 20px; align-items: flex-end; flex: 1;">
-                <div class="filter-group">
-                    <label>🔍 YUNGURURA MU BWOKO BW'UMUSANZU:</label>
-                    <!-- FORCE SUBMIT ACTION IHITA YOHEREZA FILTER AKO KANYA KURI ONCHANGE -->
-                    <select class="filter-select" name="purpose" onchange="this.form.submit()">
-                        <option value="all" {% if selected_purpose == 'all' or not selected_purpose %}selected{% endif %}>-- Cyane Yose (All Contributions) --</option>
-                        {% for item in totals_by_purpose %}
-                            <option value="{{ item.purpose }}" {% if selected_purpose == item.purpose %}selected{% endif %}>{{ item.purpose }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
+    <!-- KUKOSORA: FOMU NSHYA YO KUYUNGURURA LIVE KU MURIRIMBYI N'UBWOKO BW'UMUSANZU -->
+<form method="GET" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end; margin-bottom: 25px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    
+    <!-- 1. ACU K'URUTONDE RW'ABARIRIMBYI -->
+    <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label style="font-weight: bold; color: #475569; font-size: 0.9em;">👥 Yungurura ku Muririmbyi:</label>
+        <select name="member" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em; width: 100%;">
+            <option value="">-- Abaririmbyi Bose --</option>
+            {% for m in members %}
+                <option value="{{ m.id }}" {% if m.id == selected_member %}selected{% endif %}>{{ m.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- 2. ACU GASHYA K'UBWOKO BW'UMUSANZU (PURPOSE) -->
+    <div style="display: flex; flex-direction: column; gap: 5px;">
+        <label style="font-weight: bold; color: #475569; font-size: 0.9em;">🎯 Yungurura ku Bwoko bw'Umusanzu:</label>
+        <select name="purpose" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em; width: 100%;">
+            <option value="">-- Amoko Yose y'Imisanzu --</option>
+            {% for p in purposes %}
+                {% if p %}
+                    <option value="{{ p }}" {% if p == selected_purpose %}selected{% endif %}>{{ p }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- 3. BUTO NKURU Y'UMUVUDUKO -->
+    <button type="submit" style="background: #1e3a8a; color: white; border: none; padding: 11px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em; height: 42px; display: flex; align-items: center; justify-content: center; transition: 0.2s;">
+        🔍 Filter Live
+    </button>
+</form>
+
+
             
             <button class="btn-download" onclick="downloadFilteredCSV()">
                 📥 Download

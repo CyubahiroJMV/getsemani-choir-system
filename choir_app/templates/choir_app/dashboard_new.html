@@ -5,179 +5,188 @@
     <title>Getsemani Choir Portal - Dashboard y'Abayobozi</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f8fafc; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* SIDEBAR LAYOUT */
-        .sidebar { width: 260px; background: #1e3a8a; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; z-index: 10; }
-        .side-top h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3em; border-bottom: 1px solid #2563eb; padding-bottom: 15px; }
-        .side-menu a { padding: 12px 25px; color: #cbd5e1; text-decoration: none; display: block; font-weight: 600; font-size: 0.95em; }
-        .side-menu a:hover { background: #2563eb; color: white; }
-        .side-user-box { padding: 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 45px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-        
-        /* MAIN CONTENT ROW */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background-color: #f1f5f9; }
-        .top-navbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        .top-navbar a { color: #ef4444; font-weight: bold; text-decoration: none; }
-
-        /* GRID SYSTEM FOR FORMS AND TABLES */
-        .dashboard-grid { display: flex; gap: 25px; align-items: flex-start; }
-        .left-forms-column { flex: 1.1; display: flex; flex-direction: column; gap: 20px; }
-        .right-tables-column { flex: 0.9; display: flex; flex-direction: column; gap: 20px; }
-
-        .content-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .content-card h3 { margin-top: 0; margin-bottom: 15px; color: #1e3a8a; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-        
-        /* INPUT STYLES */
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: #475569; font-size: 0.9em; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.95em; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #2563eb; background: white; }
-        .btn-submit { background: #2563eb; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1em; transition: 0.2s; }
-        .btn-submit:hover { background: #1d4ed8; }
-
-        /* TABLE STYLE */
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.9em; }
-        th { background-color: #f8fafc; color: #475569; font-weight: 600; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #5a6268; color: #333; display: flex; min-height: 100vh; }
+        .sidebar-panel { width: 260px; background: #1e3a8a; color: white; padding: 25px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-title { font-size: 1.5em; font-weight: bold; border-bottom: 2px dashed #2b6cb0; padding-bottom: 15px; margin-bottom: 30px; text-align: center; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+        .menu-btn { background: #2b6cb0; color: white; text-decoration: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .main-workspace { flex: 1; padding: 30px; display: flex; flex-direction: column; gap: 25px; max-height: 100vh; overflow-y: auto; }
+        .workspace-header { background: white; padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .workspace-header h2 { margin: 0; color: #1e3a8a; font-size: 1.4em; }
+        .btn-logout { background: #ed8936; color: white; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; display: inline-block; }
+        .grid-layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 25px; align-items: start; }
+        .left-forms-column { display: flex; flex-direction: column; gap: 25px; }
+        .right-tables-column { display: flex; flex-direction: column; gap: 25px; }
+        .content-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .content-card h3 { margin-top: 0; margin-bottom: 18px; color: #1e3a8a; font-size: 1.25em; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .app-form { display: flex; flex-direction: column; gap: 15px; }
+        .form-row { display: flex; flex-direction: column; gap: 6px; }
+        .form-row label { font-weight: 600; color: #475569; }
+        .form-row input, .form-row select, .form-row textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%; outline: none; }
+        .btn-submit-blue { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-submit-green { background: #16a34a; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        .data-item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; }
+        .btn-action-edit { background: #2b6cb0; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        .btn-action-delete { background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- ================= SidebarMenu ================= -->
-    <div class="sidebar">
-        <div class="side-top">
-            <h2>Getsemani Choir Portal</h2>
-            <div class="side-menu">
-                <a href="{% url 'index' %}">🏠 Subira ku Intego</a>
-            </div>
-        </div>
-        <div class="side-user-box">
-            <img src="https://unsplash.com" class="user-avatar">
-            <div class="user-names-mini">Getsemani Admin</div>
+    <div class="sidebar-panel">
+        <div class="sidebar-menu">
+            <div class="sidebar-title">Getsemani Choir Portal</div>
+            <a href="{% url 'index' %}" class="menu-btn">🏠 Subira ku Intego</a>
         </div>
     </div>
 
-    <!-- ================= Main Area ================= -->
-    <div class="main-content">
-        <div class="top-navbar">
-            <div style="font-weight: bold; color: #334155;">Getsemani Choir Portal</div>
-            <a href="{% url 'logout' %}">🔐 Sign Out ➔</a>
+    <div class="main-workspace">
+        <div class="workspace-header">
+            <h2>Dashboard y'Abayobozi</h2>
+            <a href="{% url 'logout' %}" class="btn-logout">🚪 Sign Out</a>
         </div>
 
-        <div class="dashboard-grid">
+        <div class="grid-layout">
             
             <div class="left-forms-column">
-                <!-- FORM 1: INDIRIMBO -->
+                <!-- A. FOMU Y'INDIRIMBO -->
                 <div class="content-card">
-                    <h3>🎵 Injiza Indirimbo Nshya muri System</h3>
-                    <form method="POST" action="{% url 'dashboard' %}" enctype="multipart/form-data">
+                    <h3>🎵 Injiza Indirimbo Nshya</h3>
+                    <form method="POST" enctype="multipart/form-data" class="app-form">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label>Umutwe w'Indirimbo (Song Title):</label>
-                            <input type="text" name="title" placeholder="Andika izina ry'indirimbo..." required>
+                        <input type="hidden" name="add_song" value="1">
+                        <div class="form-row">
+                            <label>Umutwe w'Indirimbo:</label>
+                            <input type="text" name="title" required>
                         </div>
-                        <div class="form-group">
-                            <label>Upload Audio File (.mp3, .wav):</label>
-                            <input type="file" name="audio_file" accept="audio/*" style="border: 1px dashed #2563eb; background: #f0fdf4; padding: 8px;">
+                        <div class="form-row">
+                            <label>Upload Audio File (.mp3):</label>
+                            <input type="file" name="audio_file">
                         </div>
-                        <div class="form-group">
-                            <label>Amagambo y'Indirimbo (Lyrics):</label>
-                            <textarea name="lyrics" rows="4" placeholder="Andika amagambo..." required></textarea>
+                        <div class="form-row">
+                            <label>Amagambo y'Indirimbo:</label>
+                            <textarea name="lyrics"></textarea>
                         </div>
-                        <button type="submit" name="add_song" class="btn-submit">Bika Indirimbo muri Repertoire</button>
+                        <button type="submit" class="btn-submit-blue">Bika Indirimbo muri Repertoire</button>
                     </form>
                 </div>
 
-                <!-- FORM 2: IMISANZU -->
+
+                        <!-- =========================================================================
+                     👥 FOMU NKURU YO KWINJIZA UMURIRIMBYI MUSHYA (YAGARUWHE LIVE)
+                     ========================================================================= -->
+                     <div class="content-card" style="border-top: 4px solid #1e3a8a;">
+                        <h3>👥 Injiza Umuririmbyi Mushya muri Korali</h3>
+                        <form method="POST" class="app-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="add_member" value="1">
+                            <div class="form-row">
+                                <label>Izina Ry'Umuririmbyi (Full Name):</label>
+                                <input type="text" name="name" required placeholder="Andika izina ry'umuririmbyi ruzuye...">
+                            </div>
+                            <div class="form-row">
+                                <label>Hitamo Ijwi Aririmba (Voice):</label>
+                                <select name="voice" required>
+                                    <option value="" disabled selected>-- Hitamo ijwi --</option>
+                                    <option value="Soprano">Soprano</option>
+                                    <option value="Alto">Alto</option>
+                                    <option value="Tenor">Tenor</option>
+                                    <option value="Bass">Bass</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-submit-blue" style="background: #1e3a8a;">Bika Umuririmbyi muri System</button>
+                        </form>
+                    </div>
+    
+                <!-- B. FOMU Y'IMISANZU -->
                 <div class="content-card">
                     <h3>💰 Injiza Umusanzu cyangwa Ituro rishya</h3>
-                    <form method="POST" action="">
+                    <form method="POST" class="app-form">
                         {% csrf_token %}
-                        <div class="form-group">
+                        <input type="hidden" name="add_contribution" value="1">
+                        <div class="form-row">
                             <label>Hitamo Umuririmbyi:</label>
                             <select name="member" required>
-                                <option value="">-- Hitamo umuririmbyi wishuye --</option>
+                                <option value="" disabled selected>-- Hitamo umuririmbyi wishuye --</option>
                                 {% for member in members %}
-                                    <option value="{{ member.id }}">{{ member.name }} ({{ member.voice }})</option>
+                                    <option value="{{ member.id }}">{{ member.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Impamvu y'Uwishyu (Purpose):</label>
-                            <input type="text" name="purpose" placeholder="Ugereranyo: Umusanzu..." required>
+                        <div class="form-row">
+                            <label>Impamvu y'Uwishyu:</label>
+                            <input type="text" name="purpose" required>
                         </div>
-                        <div class="form-group">
-                            <label>Amafaranga yishuye (Amount RWF):</label>
-                            <input type="number" name="amount" placeholder="Andika umubare..." required>
+                        <div class="form-row">
+                            <label>Amafaranga yishuye (FRW):</label>
+                            <input type="number" name="amount" required>
                         </div>
-                        <button type="submit" name="add_contribution" class="btn-submit" style="background: #16a34a;">Bika Umusanzu</button>
-                    </form>
-                </div>
-
-                <!-- FORM 3: ABARIRIMBYI -->
-                <div class="content-card">
-                    <h3>👥 Injiza Umuririmbyi Mushya</h3>
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label>Amazina y'Umuririmbyi:</label>
-                            <input type="text" name="name" placeholder="Andika amazina..." required>
-                        </div>
-                        <div class="form-group">
-                            <label>Ijwi aririmba (Voice):</label>
-                            <select name="voice">
-                                <option value="Soprano">Soprano</option>
-                                <option value="Alto">Alto</option>
-                                <option value="Tenor">Tenor</option>
-                                <option value="Bass">Bass</option>
-                            </select>
-                        </div>
-                        <button type="submit" name="add_member" class="btn-submit">Bika Umuririmbyi Mushya</button>
+                        <button type="submit" class="btn-submit-green">Bika Umusanzu</button>
                     </form>
                 </div>
             </div>
 
             <div class="right-tables-column">
-                <!-- TABLES 1: INDIRIMBO -->
+                <!-- A. REPERTOIRE Y'INDIRIMBO -->
                 <div class="content-card">
-                    <h3>📁 Repertoire y'Indirimbo ({{ songs.count|default:0 }})</h3>
-                    <div style="max-height: 220px; overflow-y: auto;">
-                        <table>
-                            <thead>
-                                <tr><th>Umutwe</th><th>Amajwi (Audio)</th></tr>
-                            </thead>
-                            <tbody>
-                                {% for song in songs %}
-                                    <tr>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px;">
-                                            <div style="display: flex; flex-direction: column;">
-                                                <span style="font-weight: bold; color: #1e3a8a;">{{ song.title }}</span>
-                                                <span style="font-size: 0.8em; color: #64748b;">🎤 Added Live</span>
-                                            </div>
-                                            <!-- ACTIONS BUTTONS FOR EDIT AND DELETE -->
-                                            <div style="display: flex; gap: 8px;">
-                                                <a href="{% url 'edit_song' song.id %}" style="background: #2b6cb0; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold;">✏️ Edit</a>
-                                                <a href="{% url 'delete_song' song.id %}" onclick="return confirm('Ese mukuri ushaka gusiba iyi ndirimbo burundu?')" style="background: #e53e3e; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold;">🗑️ Siba</a>
-                                            </div>
-                                        </div>
-                                        
-                                        <td>
-                                            {% if song.audio_file %}
-                                                <span style="color: #16a34a; font-weight: bold;">✅ Irahari</span>
-                                            {% else %}
-                                                <span style="color: #dc2626; font-style: italic;">❌ Nta Audio</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr><td colspan="2" style="text-align:center; color:#94a3b8;">Nta ndirimbo ihari.</td></tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                    <h3>📁 Repertoire y'Indirimbo</h3>
+                    {% for song in songs %}
+                        <div class="data-item-row">
+                            <div>
+                                <strong style="color:#1e3a8a;">{{ song.title }}</strong>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <a href="{% url 'edit_song' song.id %}" class="btn-action-edit">✏️ Edit</a>
+                                <form action="{% url 'delete_song' song.id %}" method="POST" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action-delete">🗑️ Siba</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
 
-                <!-- TABLES 2: ABARIRIMBYI -->
+                <!-- B. URUTONDE RW'ABARIRIMBYI -->
                 <div class="content-card">
-                    <h3>👥 Urutonde rw'Abaririmbyi ({{ members.count|default:0 }})</h3>
+                    <h3>👥 Urutonde rw'Abaririmbyi</h3>
+                    {% for member in members %}
+                        <div class="data-item-row">
+                            <div>
+                                <strong style="color:#1e3a8a;">{{ member.name }}</strong> <small>({{ member.voice }})</small>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <a href="{% url 'edit_member' member.id %}" class="btn-action-edit">✏️ Edit</a>
+                                <form action="{% url 'delete_member' member.id %}" method="POST" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action-delete">🗑️ Siba</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- C. IMISANZU -->
+                <div class="content-card">
+                    <h3>📊 Imisanzu n'Amaturo Bimaze Kwinjira</h3>
+                    {% for contribution in contributions %}
+                        <div class="data-item-row">
+                            <div>
+                                <strong style="color:#1e3a8a;">{{ contribution.member.name }}</strong>
+                                <br><span style="color:#16a34a; font-weight:bold;">{{ contribution.amount }} FRW</span>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <a href="{% url 'edit_contribution' contribution.id %}" class="btn-action-edit">✏️ Edit</a>
+                                <form action="{% url 'delete_contribution' contribution.id %}" method="POST" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action-delete">🗑️ Siba</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</body>
+</html>
