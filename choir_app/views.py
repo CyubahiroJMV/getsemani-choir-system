@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Member, Song, Contribution
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
+from django.db.models import Sum
 
 # 1. HOME PAGE
 def index(request):
@@ -56,11 +57,21 @@ def dashboard(request):
     }
     return render(request, 'choir_app/dashboard_new.html', context)
 
-# 3. LIST VIEWS FOR USERS
+# 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
 def members_list(request):
     members = Member.objects.all()
-    return render(request, 'choir_app/members.html', {'members': members})
+    
+    # Kwakira live amakuru yanditswe muli akazu ka Search (q parameter)
+    query = request.GET.get('q')
+    
+    if query:
+        # Ibi bishakisha niba ririya jambo riri muli Name cyangwa muli Voice (icya rimwe)
+        members = members.filter(name__icontains=query) | members.filter(voice__icontains=query)
+        
+    return render(request, 'choir_app/members.html', {'members': members, 'query': query})
+
+
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
@@ -77,23 +88,37 @@ def songs_list(request):
     return render(request, 'choir_app/songs.html', {'songs': songs, 'query': query})
 
 
+# 3. LIST VIEWS FOR USERS (KUKOSORA: TOTAL SUM ENGINE FOR CONTRIBUTIONS)
 @login_required(login_url='/login/')
 def contributions_list(request):
     contributions = Contribution.objects.all()
     members = Member.objects.all()
     purposes = Contribution.objects.values_list('purpose', flat=True).distinct()
+    
     member_id = request.GET.get('member')
     selected_purpose = request.GET.get('purpose')
-    if member_id: contributions = contributions.filter(member_id=member_id)
-    if selected_purpose: contributions = contributions.filter(purpose=selected_purpose)
+    
+    # 1. Kuyungurura binyuze ku Muririmbyi
+    if member_id:
+        contributions = contributions.filter(member_id=member_id)
+        
+    # 2. Kuyungurura binyuze ku Bwoko bw'Umusanzu
+    if selected_purpose:
+        contributions = contributions.filter(purpose=selected_purpose)
+        
+    # KUKOSORA NKURU: Kubara live igiteranyo cy'amafaranga yose ari muli Table ubu ngubu!
+    total_amount = contributions.aggregate(total=Sum('amount'))['total'] or 0
+        
     context = {
         'contributions': contributions,
         'members': members,
         'purposes': purposes,
         'selected_member': int(member_id) if member_id and member_id.isdigit() else None,
-        'selected_purpose': selected_purpose
+        'selected_purpose': selected_purpose,
+        'total_amount': total_amount # KUKOSORA: Inyunguru nshya isunika total muli HTML!
     }
     return render(request, 'choir_app/contributions.html', context)
+
 
 # 4. EDIT & DELETE ACTIONS FOR SONGS
 @login_required(login_url='/login/')

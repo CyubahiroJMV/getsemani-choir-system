@@ -1,110 +1,170 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Applicant Portal - Repertoire y'Izindirimbo</title>
+    <title>Urutonde rw'Indirimbo - Chorale Getsemani</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f1f5f9; display: flex; height: 100vh; overflow: hidden; }
         
-        /* SIDEBAR IBUMOSO */
-        .sidebar { width: 260px; background: #1e3a8a; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; z-index: 10; }
-        .side-top h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3em; border-bottom: 1px solid #2563eb; padding-bottom: 15px; }
-        .side-menu a { padding: 12px 25px; color: #cbd5e1; text-decoration: none; display: block; font-weight: 600; font-size: 0.95em; }
-        .side-menu a:hover, .side-menu a.active { background: #2563eb; color: white; }
-        .side-user-box { padding: 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 10px; }
-        .user-avatar { width: 45px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-        
-        /* MAIN CONTENT ROW */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; background-color: #f1f5f9; }
-        .top-navbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        .top-navbar a { color: #2563eb; font-weight: bold; text-decoration: none; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            /* 1. KWINJIZA IFOTO Y'INYUMA IVUYE MURI STATIC REPOSITORY */
+            background: url("{% static 'choir_app/bg_choir.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex; 
+            min-height: 100vh;
+        }
 
-        /* SEARCH BAR STYLES */
-        .search-container { display: flex; gap: 15px; margin-bottom: 25px; width: 100%; max-width: 700px; }
-        .search-input { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.95em; background: white; }
-        .btn-search { background: #ed8936; color: white; padding: 12px 25px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-search:hover { background: #dd6b20; }
-
-        /* SONG CARDS STYLING */
-        .songs-list-container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 800px; }
-        .song-display-card { background: white; padding: 25px; border-radius: 8px; border-left: 5px solid #2563eb; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
-        .song-display-card h3 { margin-top: 0; color: #1e3a8a; font-size: 1.5em; margin-bottom: 15px; }
-        .song-lyrics-content { color: #475569; font-size: 1.05em; font-style: italic; line-height: 1.6; white-space: pre-line; margin-bottom: 20px; }
+        /* 2. SIDEBAR NAVIGATION DESIGN (YABAYE TRANSPARENT GAKE) */
+        .sidebar { 
+            width: 260px; 
+            background: rgba(30, 58, 138, 0.94); 
+            color: white; 
+            min-height: 100vh; 
+            padding: 30px 20px; 
+            backdrop-filter: blur(8px);
+        }
+        .sidebar h2 { font-size: 1.4em; border-bottom: 2px dashed #2b6cb0; padding-bottom: 15px; margin-top: 0; text-align: center; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
+        .sidebar-menu a { color: #cbd5e1; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .sidebar-menu a.active { background: #2563eb; color: white; }
         
-        /* AUDIO PANEL HASI YA LYRICS */
-        .audio-wrapper { padding-top: 15px; border-top: 1px dashed #cbd5e1; width: 100%; max-width: 500px; }
-        .audio-controls-element { width: 100%; height: 36px; }
+        .main-workspace { flex: 1; padding: 40px; max-height: 100vh; overflow-y: auto; }
+
+        /* HEADER BOX EFFECT */
+        .header-box {
+            background: rgba(255, 255, 255, 0.92) !important;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #1e3a8a;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* 3. MASTER GLASSMORPHISM CARDS (ISANDUKU Y'INDIRIMBO YABAYE TRANSPARENT) */
+        .container-box { 
+            background: rgba(255, 255, 255, 0.88) !important; 
+            padding: 35px; 
+            border-radius: 12px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            margin-bottom: 25px;
+        }
+        .container-box h3 { margin-top: 0; color: #1e3a8a; display: flex; align-items: center; gap: 10px; border-bottom: 3px solid #cbd5e1; padding-bottom: 15px; margin-bottom: 25px; font-weight: 800; }
+        
+        .song-card { 
+            background: rgba(255, 255, 255, 0.88) !important;
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .song-card h2 { color: #1e3a8a; margin-top: 0; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        
+        /* LYRICS TEXT ACCURATE STYLING */
+        .song-lyrics { 
+            color: #020617 !important; /* Umukara wa Carat 24 usomeka neza usesuye */
+            font-style: italic; 
+            white-space: pre-line; 
+            line-height: 1.7; 
+            background: rgba(248, 250, 252, 0.85); 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 5px solid #2563eb; 
+            margin: 20px 0; 
+            font-size: 1.1em; 
+            font-weight: 600;
+        }
+        audio { width: 100%; margin-top: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        /* USER PROFILE CARD IN SIDEBAR */
+        .user-profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px dashed #2b6cb0;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+        .profile-img { width: 40px; height: 40px; background: #e2e8f0; border-radius: 50%; border: 2px solid white; }
     </style>
 </head>
 <body>
 
-    <!-- ================= SIDEBAR IBUMOSO ================= -->
-    <div class="sidebar">
-        <div class="side-top">
-            <h2>Applicant Portal</h2>
-            <div class="side-menu">
+    <!-- 1. LEFT SIDEBAR NAVIGATION -->
+    <div class="sidebar" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="sidebar-top">
+            <h2>List of songs</h2>
+            <div class="sidebar-menu">
                 <a href="{% url 'index' %}">🏠 Home/Intego</a>
                 <a href="{% url 'members_list' %}">👥 Urutonde rw'Abaririmbyi</a>
                 <a href="{% url 'songs_list' %}" class="active">🎵 Urutonde rw'Indirimbo</a>
                 <a href="{% url 'contributions_list' %}">💰 Amaturo n'Imisanzu</a>
+                <hr style="border: 1px dashed #2b6cb0; width: 100%; margin: 15px 0;">
+                <a href="{% url 'logout' %}" style="color: #fca5a5;">🚪 Sign Out ➔</a>
             </div>
         </div>
-        <!-- KUKOSORA PROFILE BOX NYAKURI KURI SIDEBAR -->
-<div class="side-user-box" style="padding: 15px 20px; border-top: 1px solid #2563eb; display: flex; align-items: center; gap: 12px; background: #1e3a8a;">
-    <!-- Ifoto nshya y'ubwiza ikora nka dynamic live icon -->
-    <img src="https://dicebear.com{{ request.user.username }}" class="user-avatar" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid #60a5fa; background: #f8fafc; padding: 2px;" alt="Avatar">
-    <div class="user-info-mini" style="display: flex; flex-direction: column;">
-        <span class="user-names-mini" style="font-weight: bold; color: white; font-size: 0.95em; text-transform: capitalize;">{{ request.user.username }}</span>
-        <span style="font-size: 0.75em; color: #93c5fd; font-weight: 500;">🎭 Active Singer</span>
+        
+        <!-- SIDEBAR USER PROFILE ACCURATE LAYOUT -->
+        <div class="user-profile-card">
+            <div class="profile-img"></div>
+            <div>
+                <div style="font-weight: bold; font-size: 0.95em;">Getsemani_pr</div>
+                <div style="font-size: 0.8em; color: #4ade80; font-weight: bold; display: flex; align-items: center; gap: 4px;">🟢 Active Singer</div>
+            </div>
+        </div>
     </div>
-</div>
 
-    </div>
-
-    <!-- ================= MAIN AREA IBURYO ================= -->
-    <div class="main-content">
-        <div class="top-navbar">
-            <div style="font-weight: bold; color: #334155;">Getsemani Choir</div>
+    <!-- 2. MAIN SONGS WORKSPACE (RIGHT) -->
+    <div class="main-workspace">
+        
+        <div class="header-box">
+            Getsemani Choir
         </div>
 
-        <h2 style="color: #1e3a8a; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            🎵 Repository y'Indirimbo (Lyrics Status)
-        </h2>
+        <div class="container-box">
+            <h3>🎵 Repository y'Indirimbo (Lyrics Status)</h3>
+            
+            <!-- FOMU NKURU Y'ISHAKISHA -->
+            <form method="GET" action="{% url 'songs_list' %}" style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Shakisha indirimbo hano (Andika izina cyangwa amagambo)..." style="flex: 1; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em; outline: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); font-weight: 500;">
+                <button type="submit" style="background: #ed8936; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em;">Shakisha</button>
+            </form>
 
-       <!--  FOMU NKURU Y'ISHAKISHA (FIXED NAME="Q" PARAMETER OVERRIDE) -->
-<form method="GET" action="{% url 'songs_list' %}" style="display: flex; gap: 10px; margin-bottom: 25px;">
-    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Shakisha indirimbo hano (Andika izina cyangwa amagambo)..." style="flex: 1; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1em; outline: none;">
-    <button type="submit" style="background: #ed8936; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em;">Shakisha</button>
-</form>
-
-
-        <!-- LIST OF ALL SONGS WITH AUDIOS -->
-        <div class="songs-list-container">
             {% for song in songs %}
-                <div class="song-display-card">
-                    <h3>{{ song.title }}</h3>
-                    <div class="song-lyrics-content">{{ song.lyrics }}</div>
+                <div class="song-card">
+                    <h2>
+                        <span style="background: #2563eb; color: white; padding: 3px 12px; border-radius: 6px; font-size: 0.75em;">({{ forloop.counter }})</span> 
+                        {{ song.title }}
+                    </h2>
                     
-                    <!-- HANO NI HO TWICARIJE AUDIO PLAYER HASI YA LYRICS KURI PAGE Y'INDIRIMBO -->
-                    <div class="audio-wrapper">
-                        {% if song.audio_file %}
-                            <audio controls class="audio-controls-element">
-                                <source src="{{ song.audio_file.url }}" type="audio/mpeg">
-                                Browser yawe ntabwo ishyigikiye amajwi.
-                            </audio>
-                        {% else %}
-                            <span style="font-size: 0.85em; color: #94a3b8; font-style: italic;">❌ Nta Audio y'iyi ndirimbo yashyizweho n'abayobozi.</span>
-                        {% endif %}
-                    </div>
+                    {% if song.lyrics %}
+                        <div class="song-lyrics">{{ song.lyrics }}</div>
+                    {% else %}
+                        <p style="color: #64748b; font-style: italic;">Nta magambo (Lyrics) yanditswe kuri iyi ndirimbo.</p>
+                    {% endif %}
+                    
+                    {% if song.audio_file %}
+                        <audio controls controlsList="nodownload">
+                            <source src="{{ song.audio_file.url }}" type="audio/mpeg">
+                            Browser yawe ntabwo ishyigikiye kwatsa audio player.
+                        </audio>
+                    {% endif %}
                 </div>
             {% empty %}
-                <div style="background: white; padding: 30px; text-align: center; border-radius: 8px; color: #94a3b8; font-style: italic; border: 1px solid #e2e8f0;">
-                    Nta ndirimbo ziri muri repertoire racyandikwa muri system.
+                <div class="song-card" style="text-align: center;">
+                    <p style="color: #64748b; font-style: italic; margin: 0;">Nta ndirimbo n'imwe uhuje n'iryo jambo rishakishwa.</p>
                 </div>
             {% endfor %}
         </div>
-        
     </div>
 
 </body>
