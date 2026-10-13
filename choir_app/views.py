@@ -249,24 +249,20 @@ def admin_logout(request):
     logout(request)
     return redirect('login')
 
-# KWINJIZA LIVE AGAKORESHO KA REQUESTS (SHYIRA UYU MURONGO HARUGURU CYANE MURI VIEWS)
-import requests
 
-
-# =========================================================================
-# 9. MASTER APPROVAL VERIFICATION FUNCTION (STANDARD SMS DISPATCH ENGINE)
+    # =========================================================================
+# 9. MASTER APPROVAL VERIFICATION FUNCTION (FINAL CLEAN SMS CONSOLE DISPATCH)
 # =========================================================================
 @login_required(login_url='/login/')
 def verify_user(request, user_id):
-    # Kwemera ko admin_getsemani yemeza umuser directly live muli database
     if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
         return redirect('songs_list')
         
     user_to_verify = User.objects.get(id=user_id)
-    user_to_verify.is_active = True  # Kwemeza konti ye live muli database nyakuri!
+    user_to_verify.is_active = True  # Kwemeza konti ye live muli database!
     user_to_verify.save()
     
-    # 📢 AUTOMATIC STANDARD SMS NOTIFICATION LOGIC
+    # 📢 AUTOMATIC STANDARD SMS LOGIC
     phone_number = None
     try:
         member_profile = Member.objects.get(name=user_to_verify.username)
@@ -277,7 +273,6 @@ def verify_user(request, user_id):
             phone_number = str(user_to_verify.username).strip()
 
     if phone_number:
-        # Guhindura numero ku nguvu ikaza muli format ya 25078...
         if phone_number.startswith('0'):
             phone_number = '250' + phone_number[1:]
         elif not phone_number.startswith('250'):
@@ -285,15 +280,15 @@ def verify_user(request, user_id):
 
         try:
             sms_message = f"🎉 Yego! Konti yanyu muli Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi usesuye 100%!\n\nUbu ngubu ushobora guhita uwinjira (Login) muli System ukoresheje Username na Password byanyu ngo urebe Repertoire y'indirimbo, amaturo n'imisanzu usesuye.\n\nMurakoze cyane, Imana ibahe umugisha!"
-            
-            # Gushushanya ubutumwa live muli Render Terminal logs usesuye usesuye
             print("\n" + "="*50)
             print(f"📢 SMS SENT TO: {phone_number}")
             print(f"💬 MESSAGE: {sms_message}")
             print("="*50 + "\n")
-            
         except Exception:
             pass
             
     messages.success(request, f"Konti ya {user_to_verify.username} yamaze kwemezwa neza muli database usesuye!")
     return redirect('/panel/')
+
+
+
