@@ -42,6 +42,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+        # KUKOSORA NKURU: Gushyiraho WhiteNoise ishinzwe gusunika amafoto na static live kuri Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,3 +143,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Inzira y'izina rya default isunika ubutumwa muli system
 DEFAULT_FROM_EMAIL = "Chorale Getsemani Portal <getsemanichoirapp@gmail.com>"
 
+
+# =========================================================================
+# 📢 WHITENOISE PRODUCTION STATIC FILES COMPRESSOR CONFIGURATION
+# =========================================================================
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
