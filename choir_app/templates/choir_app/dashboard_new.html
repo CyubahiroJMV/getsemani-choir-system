@@ -1,11 +1,22 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Getsemani Choir Portal - Dashboard y'Abayobozi</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #5a6268; color: #333; display: flex; min-height: 100vh; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            /* KUKOSORA KAMWE KU KAMWE: Gushyiraho ifoto y'inyuma ivuye muli static */
+            background: url("{% static 'choir_app/bg_choir.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: #333; 
+            display: flex; 
+            min-height: 100vh; 
+        }
+
         .sidebar-panel { width: 260px; background: #1e3a8a; color: white; padding: 25px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-title { font-size: 1.5em; font-weight: bold; border-bottom: 2px dashed #2b6cb0; padding-bottom: 15px; margin-bottom: 30px; text-align: center; }
         .sidebar-menu { display: flex; flex-direction: column; gap: 12px; flex: 1; }
@@ -83,6 +94,13 @@
                                 <label>Izina Ry'Umuririmbyi (Full Name):</label>
                                 <input type="text" name="name" required placeholder="Andika izina ry'umuririmbyi ruzuye...">
                             </div>
+                        <!-- KUKOSORA NKURU: GUHA INPUT IZINA RYA 'PHONE' NEZA NEZA NK'UKO DATABASE IBISHAKA -->
+                        <div class="form-row">
+                            <label>Telephone Number:</label>
+                            <input type="text" name="phone" placeholder="Andika numero ya telefone yawe...">
+                        </div>
+
+
                             <div class="form-row">
                                 <label>Hitamo Ijwi Aririmba (Voice):</label>
                                 <select name="voice" required>
@@ -147,19 +165,41 @@
 
                 <!-- B. URUTONDE RW'ABARIRIMBYI -->
                 <div class="content-card">
+                                    <!-- =========================================================================
+                     🔒 ACU GASHYA: PENDING VERIFICATION SYSTEM (UTUBUTO TW'ICYATSI LIVE)
+                     ========================================================================= -->
+                <div class="content-card" style="border-top: 4px solid #ed8936; margin-bottom: 25px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                    <h3 style="color: #ed8936; margin-top: 0; margin-bottom: 18px; font-size: 1.25em; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔒 Abategereje Kwemezwa ({{ pending_users.count }})</h3>
+                    
+                    {% for p_user in pending_users %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; margin-bottom: 8px;">
+                            <div>
+                                <h4 style="margin: 0; color: #b45309; font-size: 1.1em; font-weight: 700;">👤 Username: {{ p_user.username }}</h4>
+                                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.85em;">Status: 🟡 Tegereje Verification</p>
+                            </div>
+                            <!-- BUTO NKURU Y'ICYATSI YEMERA USER DIRECTLY LIVE -->
+                            <a href="/verify-user/{{ p_user.id }}/" style="background: #16a34a; color: white; text-decoration: none; padding: 8px 15px; border-radius: 6px; font-size: 0.9em; font-weight: bold; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);">✓ Verify User</a>
+                        </div>
+                    {% empty %}
+                        <p style="text-align: center; color: #64748b; font-style: italic; margin: 0; padding: 10px;">🟢 Nta muser n'umwe utaranyura muli verification racyari ubu.</p>
+                    {% endfor %}
+                </div>
+
                     <h3>👥 Urutonde rw'Abaririmbyi</h3>
                     {% for member in members %}
                         <div class="data-item-row">
                             <div>
                                 <strong style="color:#1e3a8a;">{{ member.name }}</strong> <small>({{ member.voice }})</small>
                             </div>
-                            <div style="display:flex; gap:5px;">
-                                <a href="{% url 'edit_member' member.id %}" class="btn-action-edit">✏️ Edit</a>
-                                <form action="{% url 'delete_member' member.id %}" method="POST" style="margin:0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-action-delete">🗑️ Siba</button>
-                                </form>
-                            </div>
+                                                        <!-- KUKOSORA KAMWE KU KAMWE: INZIRA Z'UKURI Z'UTUBUTO TWA ABARIRIMBYI -->
+                                                        <div style="display:flex; gap:5px;">
+                                                            <a href="{% url 'edit_member' member.id %}" class="btn-action-edit" style="background: #2b6cb0; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold;">✏️ Edit</a>
+                                                            <form action="{% url 'delete_member' member.id %}" method="POST" style="margin:0;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn-action-delete" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🗑️ Siba</button>
+                                                            </form>
+                                                        </div>
+                            
                         </div>
                     {% endfor %}
                 </div>
@@ -173,13 +213,17 @@
                                 <strong style="color:#1e3a8a;">{{ contribution.member.name }}</strong>
                                 <br><span style="color:#16a34a; font-weight:bold;">{{ contribution.amount }} FRW</span>
                             </div>
-                            <div style="display:flex; gap:5px;">
-                                <a href="{% url 'edit_contribution' contribution.id %}" class="btn-action-edit">✏️ Edit</a>
-                                <form action="{% url 'delete_contribution' contribution.id %}" method="POST" style="margin:0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-action-delete">🗑️ Siba</button>
-                                </form>
-                            </div>
+                                                        <!-- KUKOSORA KAMWE KU KAMWE: INZIRA Z'UKURI Z'UTUBUTO TW'IMISANZU -->
+                                                        <div style="display:flex; gap:5px;">
+                                                                                            <!-- KUKOSORA DYNAMIC URL REDIRECT FOR CONTRIBUTION EDIT BUTTON -->
+                                <a href="/edit-contribution/{{ contribution.id }}/" class="btn-action-edit" style="background: #2b6cb0; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; display: inline-block;">✏️ Edit</a>
+
+                                                            <form action="{% url 'delete_contribution' contribution.id %}" method="POST" style="margin:0;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn-action-delete" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85em; font-weight: bold; cursor: pointer;">🗑️ Siba</button>
+                                                            </form>
+                                                        </div>
+                            
                         </div>
                     {% endfor %}
                 </div>

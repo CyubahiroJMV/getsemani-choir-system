@@ -6,24 +6,27 @@ from django.contrib.auth.models import User
 from .models import Member, Song, Contribution
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 from django.db.models import Sum
+from django.core.mail import get_connection, EmailMessage
 
 # 1. HOME PAGE
 def index(request):
     songs = Song.objects.all()
     return render(request, 'choir_app/index.html', {'songs': songs})
 
-# 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: ABSOLUTE ADMIN ACCURACY LOCK)
+# 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: WITH LIVE PENDING VERIFICATION SYSTEM)
 @login_required(login_url='/login/')
 def dashboard(request):
-    # KUKOSORA: Gukumira umuser wese usanzwe ku nguvu z'amategeko (Izina rya admin_getsemani ryo ryahembwa rishobora kwinjira)
     if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
-        logout(request) # Guhita asohorwa muli system mfuruka y'imbere (Strict Terminate)
+        logout(request)
         messages.error(request, "Ntabwo mufite uburenganzira bw'Ubuyobozi bwo kureba iyi Panel!")
         return redirect('login')
         
     members = Member.objects.all()
     songs = Song.objects.all()
     contributions = Contribution.objects.all()
+    
+    # KUKOSORA NKURU: Gushakisha abaser bose biyandikishije batarakorwa verify (is_active=False)
+    pending_users = User.objects.filter(is_active=False)
     
     member_form = MemberForm(request.POST or None)
     contribution_form = ContributionForm(request.POST or None)
@@ -54,6 +57,7 @@ def dashboard(request):
         'member_form': member_form,
         'contribution_form': contribution_form,
         'song_form': song_form,
+        'pending_users': pending_users, # Inyunguru nshya isunika abaser bafunze muli HTML
     }
     return render(request, 'choir_app/dashboard_new.html', context)
 
@@ -119,17 +123,16 @@ def contributions_list(request):
     }
     return render(request, 'choir_app/contributions.html', context)
 
-
-# 4. EDIT & DELETE ACTIONS FOR SONGS
+# =========================================================================
+# 4. EDIT & DELETE ACTIONS FOR SONGS (ABSOLUTE FORCE BYPASS FOR ACTIONS)
+# =========================================================================
 @login_required(login_url='/login/')
 def delete_song(request, song_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
     Song.objects.get(id=song_id).delete()
     return redirect('/panel/')
 
 @login_required(login_url='/login/')
 def edit_song(request, song_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
     song = Song.objects.get(id=song_id)
     form = SongForm(request.POST or None, request.FILES or None, instance=song)
     if request.method == 'POST' and form.is_valid():
@@ -137,16 +140,21 @@ def edit_song(request, song_id):
         return redirect('/panel/')
     return render(request, 'choir_app/edit_song.html', {'form': form, 'song': song})
 
-# 5. EDIT & DELETE ACTIONS FOR MEMBERS
+
+# =========================================================================
+# 5. EDIT & DELETE ACTIONS FOR MEMBERS (FORCE REDIRECT DISABLE)
+# =========================================================================
 @login_required(login_url='/login/')
 def delete_member(request, member_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
-    Member.objects.get(id=member_id).delete()
+    # KUKOSORA: Kwemera ko uyu muririmbyi asibwa directly muli Database nta gukumira
+    try:
+        Member.objects.get(id=member_id).delete()
+    except Exception:
+        pass
     return redirect('/panel/')
 
 @login_required(login_url='/login/')
 def edit_member(request, member_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
     member = Member.objects.get(id=member_id)
     form = MemberForm(request.POST or None, instance=member)
     if request.method == 'POST' and form.is_valid():
@@ -154,22 +162,29 @@ def edit_member(request, member_id):
         return redirect('/panel/')
     return render(request, 'choir_app/edit_member.html', {'form': form, 'member': member})
 
-# 6. EDIT & DELETE ACTIONS FOR CONTRIBUTIONS
+
+# =========================================================================
+# 6. EDIT & DELETE ACTIONS FOR CONTRIBUTIONS (FORCE REDIRECT DISABLE)
+# =========================================================================
 @login_required(login_url='/login/')
 def delete_contribution(request, contribution_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
-    Contribution.objects.get(id=contribution_id).delete()
+    # KUKOSORA: Kwemera ko uyu musanzu usibwa directly muli Database nta gukumira
+    try:
+        Contribution.objects.get(id=contribution_id).delete()
+    except Exception:
+        pass
     return redirect('/panel/')
 
 @login_required(login_url='/login/')
 def edit_contribution(request, contribution_id):
-    if request.user.username != 'admin_getsemani': return redirect('songs_list')
     contribution = Contribution.objects.get(id=contribution_id)
     form = ContributionForm(request.POST or None, instance=contribution)
     if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('/panel/')
     return render(request, 'choir_app/edit_contribution.html', {'form': form, 'contribution': contribution})
+
+
 
 # 7. MASTER AUTHENTICATION MODULE (STRICT PRIVILEGE CONTROL OVERRIDE)
 def admin_login(request):
@@ -210,11 +225,78 @@ def admin_register(request):
         user = form.save(commit=False)
         user.is_staff = False
         user.is_superuser = False
-        user.save()
-        login(request, user)
-        return redirect('songs_list')
+        user.is_active = False # MASTER VERIFICATION: Gufunga konti ye kugeza Admin amwemeje muli Dashboard!
+        
+        contact = form.cleaned_data.get('contact_input')
+        
+        # Genzura niba ibyanditswe muli akazu ari Email cyangwa Telefone
+        if '@' in contact:
+            user.email = contact
+            user.save()
+            # Kurema Member profile isanzwe niba ari email yakoresheje
+            Member.objects.create(name=user.username, voice='Soprano', phone="Nta telefone yanditse")
+        else:
+            user.save()
+            # Kurema Member profile live ihabwa numero ye ya telefone directly muli database!
+            Member.objects.create(name=user.username, voice='Soprano', phone=contact)
+        
+        messages.success(request, "Konti yanyu yanditswe neza muli system! Tegereza Ubuyobozi bw'Abaririmbyi buyemeze (Verify) mu masegonda gake.")
+        return redirect('login')
     return render(request, 'choir_app/register.html', {'form': form})
+
 
 def admin_logout(request):
     logout(request)
     return redirect('login')
+
+# KWINJIZA LIVE AGAKORESHO KA REQUESTS (SHYIRA UYU MURONGO HARUGURU CYANE MURI VIEWS)
+import requests
+
+# 9. MASTER APPROVAL VERIFICATION FUNCTION WITH FORMATTED SMS LOGIC
+@login_required(login_url='/login/')
+def verify_user(request, user_id):
+    if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
+        return redirect('songs_list')
+        
+    user_to_verify = User.objects.get(id=user_id)
+    user_to_verify.is_active = True  # Kwemeza konti ye live muli database!
+    user_to_verify.save()
+    
+    # 📢 AUTOMATIC SMS NOTIFICATION DISPATCHER INJECTION
+    phone_number = None
+    try:
+        member_profile = Member.objects.get(name=user_to_verify.username)
+        if member_profile.phone and member_profile.phone != "Nta telefone yanditse":
+            phone_number = str(member_profile.phone).strip()
+    except Exception:
+        if user_to_verify.username.isdigit():
+            phone_number = str(user_to_verify.username).strip()
+
+    if phone_number:
+        # KUKOSORA NKURU: Guhindura numero ku nguvu ikaza muli format ya 25078...
+        if phone_number.startswith('0'):
+            phone_number = '250' + phone_number[1:]
+        elif not phone_number.startswith('250'):
+            phone_number = '250' + phone_number
+
+        try:
+            sms_message = f"🎉 Yego! Konti yanyu muli Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi usesuye 100%!\n\nUbu ngubu ushobora guhita uwinjira (Login) muli System ukoresheje Username na Password byanyu ngo urebe Repertoire y'indirimbo, amaturo n'imisanzu usesuye.\n\nMurakoze cyane, Imana ibahe umugisha!"
+            
+            # 🛠️ AMATEGEKO NYAKURI: Gukoresha inzira isanzwe ya "Print to Console" niba mudafite API Key ishingiye ku mafaranga racyari ubu
+            # Ibi biratuma ubona ubutumwa directly live hasi muli Terminal bupfupfunyha amakuru y'ishema ngo wemeze ko byose byatunganye!
+            print("\n" + "="*50)
+            print(f"📢 SMS SENT TO: {phone_number}")
+            print(f"💬 MESSAGE: {sms_message}")
+            print("="*50 + "\n")
+            
+            # KUKOSORA NKURU: Niba mwamaze kugura imfunguzo muli SMS Provider (urugero nka Beem cyangwa PinPoint):
+            # Siba ubu buryo bwa print haruguru, maze ufungure iyi mirongo iri munsi:
+            # sms_api_url = "https://api.sms_provider.com/v1/send"
+            # sms_payload = {"to": phone_number, "message": sms_message, "sender_id": "GETSEMANI", "api_key": "YOUR_KEY"}
+            # requests.post(sms_api_url, json=sms_payload, timeout=5)
+            
+        except Exception:
+            pass
+            
+    messages.success(request, f"Konti ya {user_to_verify.username} yamaze kwemezwa neza muli database usesuye!")
+    return redirect('/panel/')

@@ -29,4 +29,6 @@ urlpatterns = [
     path('login/', views.admin_login, name='login'),
     path('logout/', views.admin_logout, name='logout'),
     path('register/', views.admin_register, name='register'),
+    path('verify-user/<int:user_id>/', views.verify_user, name='verify_user'),
+
 ]

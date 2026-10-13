@@ -134,8 +134,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# =========================================================================
+# 📢 MASTER MAILERS CONFIGURATION (DJANGO 5.2+ NEW GMAIL SMTP ENGINE)
+# =========================================================================
+
+# Inzira y'izina rya default isunika ubutumwa muli system
+DEFAULT_FROM_EMAIL = "Chorale Getsemani Portal <getsemanichoirapp@gmail.com>"
+
