@@ -376,8 +376,6 @@ def admin_logout(request):
     logout(request)
     return redirect('login')
 
-# KWINJIZA LIVE AGAKORESHO KA REQUESTS (SHYIRA UYU MURONGO HARUGURU CYANE MURI VIEWS)
-import requests
 
 # 9. MASTER APPROVAL VERIFICATION FUNCTION WITH FORMATTED SMS LOGIC
 @login_required(login_url='/login/')
