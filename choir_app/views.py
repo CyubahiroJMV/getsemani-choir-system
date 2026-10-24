@@ -7,6 +7,11 @@ from .models import Member, Song, Contribution
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 from django.db.models import Sum
 from django.core.mail import get_connection, EmailMessage
+from django.http import HttpResponse
+import csv
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+import io
 
 # 1. HOME PAGE
 def index(request):
@@ -64,30 +69,107 @@ def dashboard(request):
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
 def members_list(request):
-    members = Member.objects.all()
-    
-    # Kwakira live amakuru yanditswe muli akazu ka Search (q parameter)
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
     
     if query:
-        # Ibi bishakisha niba ririya jambo riri muli Name cyangwa muli Voice (icya rimwe)
-        members = members.filter(name__icontains=query) | members.filter(voice__icontains=query)
+        members = Member.objects.filter(name__icontains=query) | Member.objects.filter(voice__icontains=query)
+    else:
+        members = Member.objects.all()
+
+    # 📥 ACU GASHYA: NYAKURI ONE-CLICK PYTHON PDF GENERATOR ENGINE FOR MEMBERS LIST
+    if 'download_pdf' in request.GET:
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
+        
+        # Inyandiko y'Umutwe wa Raporo (Header)
+        p.setFont("Helvetica-Bold", 16)
+        p.drawString(50, 750, "👥 URUTONDE RW'ABARIRIMBYI BOSE - CHORALE GETSEMANI")
+        p.line(50, 735, 550, 735)
+        
+        # Gutondeka imitwe y'imbonerahamwe (Table Headers)
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(50, 710, "No")
+        p.drawString(90, 710, "Amazina y'Umuririmbyi")
+        p.drawString(320, 710, "Telephone Number")
+        p.drawString(470, 710, "Ijwi aririmba")
+        p.line(50, 700, 550, 700)
+        
+        # Kwinjiza amakuru y'abaririmbyi kamwe ku kande (Table Body Logic)
+        y = 680
+        p.setFont("Helvetica", 10)
+        for i, member in enumerate(members, start=1):
+            if y < 50: # Kurema paji nshya niba abaririmbyi ari benshi cyane
+                p.showPage()
+                p.setFont("Helvetica", 10)
+                y = 750
+            
+            p.drawString(50, y, f"({i})")
+            p.drawString(90, y, str(member.name))
+            
+            phone_text = str(member.phone) if member.phone else "No phone number found"
+            p.drawString(320, y, phone_text)
+            p.drawString(470, y, str(member.voice))
+            y -= 22
+            
+        p.showPage()
+        p.save()
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="Urutonde_rw_Abaririmbyi_Getsemani.pdf"'
+        return response
         
     return render(request, 'choir_app/members.html', {'members': members, 'query': query})
-
 
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
 def songs_list(request):
-    songs = Song.objects.all()
+    query = request.GET.get('q', '')
     
-    # KUKOSORA: Kwakira live amakuru yanditswe muli akazu ka Search (q parameter)
-    query = request.GET.get('q')
-    
+    # 📥 ACU GASHYA: NYAKURI ONE-CLICK PYTHON PDF GENERATOR ENGINE FOR LYRICS
+    if 'download_lyrics_id' in request.GET:
+        try:
+            target_song = Song.objects.get(id=request.GET.get('download_lyrics_id'))
+            
+            # Gufungura amayira mu bwonko bwa RAM
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            
+            # Kwandika ubutumwa muli file buringane usesuye usesuye 100%
+            p.setFont("Helvetica-Bold", 16)
+            p.drawString(100, 750, f"🎵 INDIRIMBO: {target_song.title.upper()}")
+            
+            p.setFont("Helvetica", 12)
+            p.drawString(100, 730, "CHORALE GETSEMANI PORTAL")
+            p.line(100, 720, 500, 720)
+            
+            # Gupanga imirongo y'amagambo y'indirimbo ku ruziga rwa A4 usesuye
+            y = 680
+            p.setFont("Helvetica", 11)
+            for line in target_song.lyrics.split('\n'):
+                if y < 50: # Kurema paji nshya niba amagambo ari menshi cyane usesuye
+                    p.showPage()
+                    p.setFont("Helvetica", 11)
+                    y = 750
+                p.drawString(100, y, line)
+                y -= 18
+                
+            p.showPage()
+            p.save()
+            
+            buffer.seek(0)
+            response = HttpResponse(buffer, content_type='application/pdf')
+            clean_filename = target_song.title.replace(" ", "_")
+            response['Content-Disposition'] = f'attachment; filename="Amagambo_{clean_filename}.pdf"'
+            return response
+        except Song.DoesNotExist:
+            pass
+
     if query:
-        # Ibi bishakisha niba ririya jambo riri muli Title cyangwa muli Lyrics (icya rimwe)
-        songs = songs.filter(title__icontains=query) | songs.filter(lyrics__icontains=query)
+        songs = Song.objects.filter(title__icontains=query) | Song.objects.filter(lyrics__icontains=query)
+    else:
+        songs = Song.objects.all()
         
     return render(request, 'choir_app/songs.html', {'songs': songs, 'query': query})
 
@@ -95,31 +177,75 @@ def songs_list(request):
 # 3. LIST VIEWS FOR USERS (KUKOSORA: TOTAL SUM ENGINE FOR CONTRIBUTIONS)
 @login_required(login_url='/login/')
 def contributions_list(request):
-    contributions = Contribution.objects.all()
     members = Member.objects.all()
-    purposes = Contribution.objects.values_list('purpose', flat=True).distinct()
+    contributions = Contribution.objects.all()
     
-    member_id = request.GET.get('member')
-    selected_purpose = request.GET.get('purpose')
+    selected_member = request.GET.get('member', '')
+    selected_purpose = request.GET.get('purpose', '')
     
-    # 1. Kuyungurura binyuze ku Muririmbyi
-    if member_id:
-        contributions = contributions.filter(member_id=member_id)
-        
-    # 2. Kuyungurura binyuze ku Bwoko bw'Umusanzu
+    if selected_member:
+        contributions = contributions.filter(member_id=selected_member)
     if selected_purpose:
         contributions = contributions.filter(purpose=selected_purpose)
         
-    # KUKOSORA NKURU: Kubara live igiteranyo cy'amafaranga yose ari muli Table ubu ngubu!
-    total_amount = contributions.aggregate(total=Sum('amount'))['total'] or 0
+    # 📥 ACU GASHYA: NYAKURI ONE-CLICK PYTHON PDF GENERATOR ENGINE FOR CONTRIBUTIONS
+    if 'download_pdf' in request.GET:
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
         
+        # Inyandiko y'Umutwe wa Raporo (Header)
+        p.setFont("Helvetica-Bold", 16)
+        p.drawString(50, 750, "💰 RAPORO Y'AMATURO N'IMISANZU - CHORALE GETSEMANI")
+        p.line(50, 735, 550, 735)
+        
+        # Gutondeka imitwe y'imbonerahamwe (Table Headers)
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(50, 710, "No")
+        p.drawString(90, 710, "Umuririmbyi")
+        p.drawString(300, 710, "Intego y'Ikintu (Purpose)")
+        p.drawString(460, 710, "Amafaranga (FRW)")
+        p.line(50, 700, 550, 700)
+        
+        # Kwinjiza amakuru y'imisanzu kamwe ku kande (Table Body Logic)
+        y = 675
+        p.setFont("Helvetica", 10)
+        for i, c in enumerate(contributions, start=1):
+            if y < 80: # Kurema paji nshya niba urutonde ari ruremure cyane
+                p.showPage()
+                p.setFont("Helvetica", 10)
+                y = 750
+            
+            p.drawString(50, y, f"({i})")
+            p.drawString(90, y, str(c.member.name))
+            p.drawString(300, y, str(c.purpose))
+            p.drawString(460, y, f"{c.amount:,} FRW")
+            y -= 22
+            
+        # Gushyiraho Igiteranyo Cyose Hasi (Total Amount Row)
+        total_amount = sum(contrib.amount for contrib in contributions)
+        p.line(50, y+10, 550, y+10)
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(90, y-5, "IGITERANYO CYOSE HAMWE (TOTAL):")
+        p.drawString(460, y-5, f"{total_amount:,} FRW")
+        
+        p.showPage()
+        p.save()
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="Raporo_Amaturo_n_Imisanzu_Getsemani.pdf"'
+        return response
+        
+    total_amount = sum(c.amount for c in contributions)
+    purposes = Contribution.objects.values_list('purpose', flat=True).distinct()
+    
     context = {
-        'contributions': contributions,
         'members': members,
+        'contributions': contributions,
+        'total_amount': total_amount,
         'purposes': purposes,
-        'selected_member': int(member_id) if member_id and member_id.isdigit() else None,
+        'selected_member': int(selected_member) if selected_member else '',
         'selected_purpose': selected_purpose,
-        'total_amount': total_amount # KUKOSORA: Inyunguru nshya isunika total muli HTML!
     }
     return render(request, 'choir_app/contributions.html', context)
 
@@ -249,10 +375,10 @@ def admin_logout(request):
     logout(request)
     return redirect('login')
 
+# KWINJIZA LIVE AGAKORESHO KA REQUESTS (SHYIRA UYU MURONGO HARUGURU CYANE MURI VIEWS)
+import requests
 
-    # =========================================================================
-# 9. MASTER APPROVAL VERIFICATION FUNCTION (FINAL CLEAN SMS CONSOLE DISPATCH)
-# =========================================================================
+# 9. MASTER APPROVAL VERIFICATION FUNCTION WITH FORMATTED SMS LOGIC
 @login_required(login_url='/login/')
 def verify_user(request, user_id):
     if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
@@ -262,7 +388,7 @@ def verify_user(request, user_id):
     user_to_verify.is_active = True  # Kwemeza konti ye live muli database!
     user_to_verify.save()
     
-    # 📢 AUTOMATIC STANDARD SMS LOGIC
+    # 📢 AUTOMATIC SMS NOTIFICATION DISPATCHER INJECTION
     phone_number = None
     try:
         member_profile = Member.objects.get(name=user_to_verify.username)
@@ -273,6 +399,7 @@ def verify_user(request, user_id):
             phone_number = str(user_to_verify.username).strip()
 
     if phone_number:
+        # KUKOSORA NKURU: Guhindura numero ku nguvu ikaza muli format ya 25078...
         if phone_number.startswith('0'):
             phone_number = '250' + phone_number[1:]
         elif not phone_number.startswith('250'):
@@ -280,15 +407,22 @@ def verify_user(request, user_id):
 
         try:
             sms_message = f"🎉 Yego! Konti yanyu muli Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi usesuye 100%!\n\nUbu ngubu ushobora guhita uwinjira (Login) muli System ukoresheje Username na Password byanyu ngo urebe Repertoire y'indirimbo, amaturo n'imisanzu usesuye.\n\nMurakoze cyane, Imana ibahe umugisha!"
+            
+            # 🛠️ AMATEGEKO NYAKURI: Gukoresha inzira isanzwe ya "Print to Console" niba mudafite API Key ishingiye ku mafaranga racyari ubu
+            # Ibi biratuma ubona ubutumwa directly live hasi muli Terminal bupfupfunyha amakuru y'ishema ngo wemeze ko byose byatunganye!
             print("\n" + "="*50)
             print(f"📢 SMS SENT TO: {phone_number}")
             print(f"💬 MESSAGE: {sms_message}")
             print("="*50 + "\n")
+            
+            # KUKOSORA NKURU: Niba mwamaze kugura imfunguzo muli SMS Provider (urugero nka Beem cyangwa PinPoint):
+            # Siba ubu buryo bwa print haruguru, maze ufungure iyi mirongo iri munsi:
+            # sms_api_url = "https://api.sms_provider.com/v1/send"
+            # sms_payload = {"to": phone_number, "message": sms_message, "sender_id": "GETSEMANI", "api_key": "YOUR_KEY"}
+            # requests.post(sms_api_url, json=sms_payload, timeout=5)
+            
         except Exception:
             pass
             
     messages.success(request, f"Konti ya {user_to_verify.username} yamaze kwemezwa neza muli database usesuye!")
     return redirect('/panel/')
-
-
-
