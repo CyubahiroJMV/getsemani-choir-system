@@ -7,11 +7,12 @@ from .models import Member, Song, Contribution
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 from django.db.models import Sum
 from django.core.mail import get_connection, EmailMessage
-from django.http import HttpResponse
+import io
 import csv
+from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-import io
+
 
 # 1. HOME PAGE
 def index(request):
