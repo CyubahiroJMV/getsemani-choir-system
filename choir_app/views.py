@@ -1,3 +1,6 @@
+import io
+import csv
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,9 +10,6 @@ from .models import Member, Song, Contribution
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 from django.db.models import Sum
 from django.core.mail import get_connection, EmailMessage
-import io
-import csv
-from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
