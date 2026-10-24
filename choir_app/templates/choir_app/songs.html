@@ -140,14 +140,19 @@
             </form>
 
             {% for song in songs %}
+            
                 <div class="song-card">
                     <h2>
                         <span style="background: #2563eb; color: white; padding: 3px 12px; border-radius: 6px; font-size: 0.75em;">({{ forloop.counter }})</span> 
                         {{ song.title }}
+                        
                     </h2>
                     
                     {% if song.lyrics %}
-                        <div class="song-lyrics">{{ song.lyrics }}</div>
+                    <div id="lyrics-box-{{ song.id }}" style="padding: 15px; background: rgba(0,0,0,0.02); border-radius: 8px;">
+                        <p style="white-space: pre-line;">{{ song.lyrics }}</p>
+                    </div>
+                    
                     {% else %}
                         <p style="color: #64748b; font-style: italic;">Nta magambo (Lyrics) yanditswe kuri iyi ndirimbo.</p>
                     {% endif %}
@@ -157,7 +162,14 @@
                             <source src="{{ song.audio_file.url }}" type="audio/mpeg">
                             Browser yawe ntabwo ishyigikiye kwatsa audio player.
                         </audio>
+                 <!-- KUKOSORA NKURU: BUTO NYAKURI YA ONE-CLICK TEXT DOWNLOADER ENGINE FOR LYRICS -->
+<a href="?download_lyrics_id={{ song.id }}" style="background: #16a34a; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 0.9em; margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);">
+    📥 Download Lyrics (File)
+</a>
+
+
                     {% endif %}
+
                 </div>
             {% empty %}
                 <div class="song-card" style="text-align: center;">
@@ -168,4 +180,31 @@
     </div>
 
 </body>
+<!-- =========================================================================
+     📥 AUTOMATED LYRICS PDF DOWNLOADER ENGINE (ONE-CLICK JAVASCRIPT)
+     ========================================================================= -->
+     <script src="https://cloudflare.com"></script>
+     <script>
+     function downloadLyrics(songId, songTitle) {
+         // Gufata igice cyonyine cy'agasanduku k'amagambo y'iyo ndirimbo usesuye
+         const element = document.getElementById('lyrics-box-' + songId);
+         
+         if (!element) {
+             alert("Nta magambo (Lyrics) y'iyi ndirimbo yanditse!");
+             return;
+         }
+     
+         const options = {
+             margin:       15,
+             filename:     'Indirimbo_' + songTitle.replace(/\s+/g, '_') + '_Getsemani.pdf',
+             image:        { type: 'jpeg', quality: 0.98 },
+             html2canvas:  { scale: 2, useCORS: true },
+             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+         };
+     
+         // Gufungura amayira no gusunika download live muli browser directly usesuye
+         html2pdf().set(options).from(element).save();
+     }
+     </script>
+     
 </html>
