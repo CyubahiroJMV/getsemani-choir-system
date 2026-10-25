@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-@!ncmqkqy3s!bz!!^k2ev9^mhft4jlwj-mna+%ahrs(cacr2=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+# KUKOSORA NKURU: YEMERA LINK ZOSE NGO INTERNAL SERVER ERROR IZIME BURUNDU
+ALLOWED_HOSTS = ['getsemani-choir-system.onrender.com', '127.0.0.1', 'localhost', '*']
 
 # Application definition
 
