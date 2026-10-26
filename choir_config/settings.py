@@ -53,20 +53,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
-# KUKOSORA NKURU: GUHUZA PORTAL NA SUPABASE KUKORESHA DJANGO STANDARD ENGINE + PG8000 DRIVER
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.tsnnlhgpwqwtertchoal',
-        'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
-        'PORT': '6543',
-        'OPTIONS': {
-            'driver': 'pg8000',
-        },
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres.tsnnlhgpwqwtertchoal:Getseman!2026@://supabase.com',
+        conn_max_age=600
+    )
 }
+
 
 
 
