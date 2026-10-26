@@ -72,18 +72,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
+# Database
+# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.tsnnlhgpwqwtertchoal',
-        'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',  # KUKOSORA NKURU: Inzira y'ukuri 100%
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 
 
 # Password validation
