@@ -1,6 +1,5 @@
 django
+gunicorn
 requests
 whitenoise
 reportlab
-
-
