@@ -53,17 +53,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres.tsnnlhgpwqwtertchoal',
         'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
-        'PORT': '5432',  # KUKOSORA NKURU: Gukoresha Standard External Port directly handles
+        'HOST': '://supabase.com',  # KUKOSORA NKURU: Inzira y'ukuri 100%
+        'PORT': '5432',
     }
 }
+
 
 
 
