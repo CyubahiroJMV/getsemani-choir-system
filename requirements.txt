@@ -4,4 +4,5 @@ requests
 whitenoise
 reportlab
 dj-database-url
-pg8000
+psycopg2-binary
+
