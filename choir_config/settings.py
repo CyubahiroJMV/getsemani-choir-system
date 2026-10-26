@@ -55,7 +55,7 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=postgresql://postgres:[Getseman!2026]@db.tsnnlhgpwqwtvrfchoal.supabase.co:5432/postgres,
+        default=postgresql+pg8000:[Getseman!2026]@db.tsnnlhgpwqwtvrfchoal.supabase.co:5432/postgres,
         conn_max_age=600
     )
 }
