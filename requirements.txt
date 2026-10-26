@@ -1,7 +1,7 @@
-dj-database-url
-psycopg2-binary
 django
 gunicorn
 requests
 whitenoise
 reportlab
+dj-database-url
+psycopg2-binary
