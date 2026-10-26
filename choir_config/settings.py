@@ -53,12 +53,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
+
 DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://postgres.tsnnlhgpwqwtertchoal:Getseman!2026@://supabase.com',
         conn_max_age=600
     )
 }
+
 
 
 
