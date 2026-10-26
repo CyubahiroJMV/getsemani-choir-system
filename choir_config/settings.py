@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
 
-# Inzira nkuru y'umushinga (Root Path Mapping)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-getsemani-choir-system-secret-key-production'
 
-# Guhatira Django kwerekana amakosa yose live muli cloud usesuye
+# Guhatira Django kwerekana amakosa yose live muli cloud ngo tuyahambe
 DEBUG = True
 
 ALLOWED_HOSTS = ['getsemani-choir-system.onrender.com', '127.0.0.1', 'localhost', '*']
@@ -18,12 +17,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'choir_app', # App y'ukuri ya Korali Getsemani
+    'choir_app', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Gufasha Render gusunika static files
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
