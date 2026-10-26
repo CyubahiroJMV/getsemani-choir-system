@@ -55,11 +55,16 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://postgres.tsnnlhgpwqwtertchoal:Getseman!2026@://supabase.com',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
+        'PORT': '5432',  # KUKOSORA NKURU: Gukoresha Standard External Port directly handles
+    }
 }
+
 
 
 
