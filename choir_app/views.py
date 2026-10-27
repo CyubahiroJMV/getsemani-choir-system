@@ -15,9 +15,29 @@ from reportlab.lib.pagesizes import letter
 
 
 # 1. HOME PAGE
+# =========================================================================
+# 👑 AUTOMATED CRITICAL ADMINISTRATIVE ACCOUNT OVERRIDE INITIALIZATION ENGINE
+# =========================================================================
 def index(request):
-    songs = Song.objects.all()
-    return render(request, 'choir_app/index.html', {'songs': songs})
+    # Guhatira sisitemu kurema Admin mukuru directly muli database nshya
+    if not User.objects.filter(username='admin_getsemani').exists():
+        admin_user = User.objects.create_superuser(
+            username='admin_getsemani',
+            email='admin@getsemani.com',
+            password='Getseman!2026'
+        )
+        admin_user.is_active = True
+        admin_user.save()
+        
+        # Gupanga n'izina muli imbonerahamwe y'abaririmbyi usesuye
+        Member.objects.create(
+            name='admin_getsemani',
+            voice='Soprano',
+            phone='0780000000'
+        )
+        
+    return render(request, 'choir_app/index.html')
+
 
 # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: WITH LIVE PENDING VERIFICATION SYSTEM)
 @login_required(login_url='/login/')
