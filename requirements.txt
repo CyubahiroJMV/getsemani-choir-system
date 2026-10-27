@@ -3,4 +3,5 @@ gunicorn
 requests
 whitenoise
 reportlab
-pg8000
+dj-database-url
+psycopg2-binary
