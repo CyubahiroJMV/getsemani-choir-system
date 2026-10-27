@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-import pg8000
-import psycopg2
-import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,7 +77,7 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PURE PYTHON PG8000 CONNECTOR)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PURE PYTHON PG8000 DRIVER)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -96,9 +93,14 @@ DATABASES = {
     }
 }
 
-# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
-
-sys.modules['psycopg2'] = pg8000
+# Kukosora Nkuru: Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python array handles
+import sys
+try:
+    import pg8000
+    pg8000.DBAPI.paramstyle = 'format'
+    sys.modules['psycopg2'] = pg8000
+except ImportError:
+    pass
 
 
 
