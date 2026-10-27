@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
+import pg8000
+import psycopg2
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,7 +80,7 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE COLD BOOT ENFORCED)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PURE PYTHON PG8000 CONNECTOR)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -87,8 +90,16 @@ DATABASES = {
         'PASSWORD': 'Getseman!2026',
         'HOST': '://supabase.com',
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
+
+# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
+
+sys.modules['psycopg2'] = pg8000
+
 
 
 
