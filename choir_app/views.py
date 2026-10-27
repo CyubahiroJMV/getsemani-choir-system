@@ -23,7 +23,7 @@ def index(request):
     if not User.objects.filter(username='admin_getsemani').exists():
         admin_user = User.objects.create_superuser(
             username='admin_getsemani',
-            email='admin@getsemani.com',
+            email='cyubahirojeanmarievianey@gmail.com',
             password='Getseman!2026'
         )
         admin_user.is_active = True
