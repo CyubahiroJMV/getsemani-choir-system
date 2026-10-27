@@ -339,32 +339,35 @@ def admin_login(request):
     if request.method == 'POST' and form.is_valid():
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
-        selected_role = request.POST.get('role')
         
+        # ACU GASHYA: BYPASS FOR LOCAL SQLITE ON FREE INSTANCES
+        if username == 'admin_getsemani' and password == 'Getseman!2026':
+            from django.contrib.auth.models import User
+            user, created = User.objects.get_or_create(username=username)
+            if created or not user.is_superuser:
+                user.set_password(password)
+                user.is_superuser = True
+                user.is_staff = True
+                user.is_active = True
+                user.save()
+            
+            from django.contrib.auth import login as auth_login
+            auth_login(request, user)
+            return redirect('dashboard')
+            
         user = authenticate(username=username, password=password)
         if user is not None:
-            # 1. Kwinjira nka Admin
-            if selected_role == 'admin':
-                if username == 'admin_getsemani' or user.is_superuser:
-                    # Gushyiraho imfunguzo muli database ku nguvu niba izina rya admin ryicaye neza
-                    if not user.is_staff:
-                        user.is_staff = True
-                        user.is_superuser = True
-                        user.save()
-                    login(request, user)
-                    return redirect('dashboard')
-                else:
-                    # Niba ari umuririmbyi usanzwe wagerageje guhitamo Admin, system iramukumira (Hard Lock)
-                    messages.error(request, "Ntabwo mufite uburenganzira bw'Ubuyobozi (Admin) muli iyi system!")
-                    return redirect('login')
-            # 2. Kwinjira nk'Umuririmbyi usanzwe (Singer)
-            else:
-                login(request, user)
-                return redirect('songs_list')
+            if not user.is_active:
+                messages.error(request, "Konti yanyu ntabwo iremezwa (Not Verified)! Banza uvugane n'Ubuyobozi bwa Korali.")
+                return redirect('login')
+            login(request, user)
+            if username == 'admin_getsemani' or user.is_superuser:
+                return redirect('dashboard')
+            return redirect('songs_list')
         else:
-            messages.error(request, "Username cyangwa Password ntabwo ari zo!")
-            
+            messages.error(request, "Username cyangwa Password ntabwo ari byo!")
     return render(request, 'choir_app/login.html', {'form': form})
+
 
 def admin_register(request):
     form = AdminRegisterForm(request.POST or None)
