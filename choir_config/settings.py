@@ -9,8 +9,24 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+# =========================================================================
+# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (TOP IMPORTS MAPS)
+# =========================================================================
 import os
+import sys
 from pathlib import Path
+
+# Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python configuration handles
+try:
+    import pg8000
+    pg8000.paramstyle = 'format'
+    sys.modules['psycopg2'] = pg8000
+except (ImportError, AttributeError, NameError, KeyError):
+    pass
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -66,6 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
+
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
 # =========================================================================
@@ -79,15 +96,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
-import sys
-try:
-    import pg8000
-    pg8000.paramstyle = 'format'
-    sys.modules['psycopg2'] = pg8000
-except (ImportError, AttributeError, NameError):
-    pass
 
 
 # Internationalization
