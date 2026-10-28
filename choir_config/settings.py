@@ -13,7 +13,6 @@ import os
 import dj_database_url
 from pathlib import Path
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
@@ -70,7 +69,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE PRODUCTION LAYER)
 # =========================================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
