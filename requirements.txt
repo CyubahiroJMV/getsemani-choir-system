@@ -3,4 +3,3 @@ gunicorn
 requests
 whitenoise
 reportlab
-psycopg[binary]
