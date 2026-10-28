@@ -79,6 +79,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE + PG8000 INTERACTION)
 # =========================================================================
+# =========================================================================
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PSYCOPG3 NATIVE INTERACTION)
+# =========================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
