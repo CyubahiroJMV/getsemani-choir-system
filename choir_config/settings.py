@@ -74,8 +74,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE + PG8000 INTERACTION)
 # =========================================================================
