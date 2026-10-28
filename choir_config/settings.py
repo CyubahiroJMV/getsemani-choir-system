@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+
 # =========================================================================
-# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (PG8000 ALIGNMENT FIXED)
+# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (ERROR MAPS FIXED)
 # =========================================================================
 import os
 import sys
@@ -21,11 +22,10 @@ try:
     import pg8000
     pg8000.paramstyle = 'format'
     
-    # Mocking core module properties directly to bypass backend strict validation checks
+    # Mocking standard components straight to the module framework tracking
     sys.modules['psycopg2'] = pg8000
     sys.modules['psycopg2.extensions'] = pg8000
     sys.modules['psycopg2.extras'] = pg8000
-    sys.modules['psycopg2.errors'] = pg8000
     
     # Fake version text properties handles
     pg8000.__version__ = "2.9.9"
@@ -36,8 +36,6 @@ except (ImportError, AttributeError, NameError, KeyError):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 
 
 # Quick-start development settings - unsuitable for production
