@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 # =========================================================================
-# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (ERROR MAPS FIXED)
+# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (ERROR CONTAINER MOCK)
 # =========================================================================
 import os
 import sys
@@ -21,14 +21,18 @@ from pathlib import Path
 try:
     import pg8000
     pg8000.paramstyle = 'format'
+    pg8000.__version__ = "2.9.9"
     
-    # Mocking standard components straight to the module framework tracking
+    # KUKOSORA NKURU: Kurema fake sub-modules zose Django ishingiyeho ngo errors zizime burundu
+    import types
+    fake_errors = types.ModuleType('errors')
+    pg8000.errors = fake_errors
+    
     sys.modules['psycopg2'] = pg8000
     sys.modules['psycopg2.extensions'] = pg8000
     sys.modules['psycopg2.extras'] = pg8000
+    sys.modules['psycopg2.errors'] = fake_errors
     
-    # Fake version text properties handles
-    pg8000.__version__ = "2.9.9"
     pg8000.extensions = pg8000
     pg8000.extras = pg8000
 except (ImportError, AttributeError, NameError, KeyError):
@@ -36,6 +40,7 @@ except (ImportError, AttributeError, NameError, KeyError):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
