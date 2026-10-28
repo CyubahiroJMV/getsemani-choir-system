@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
-import sys
-sys.modules['psycopg2'] = pg8000
 
 
 # Quick-start development settings - unsuitable for production
@@ -73,27 +71,18 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
 # =========================================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.tsnnlhgpwqwtertchoal',
-        'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
-import sys
-try:
-    import pg8000
-    pg8000.DBAPI.paramstyle = 'format'
-    sys.modules['psycopg2'] = pg8000
-except ImportError:
-    pass
 
 
 # Internationalization
