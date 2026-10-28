@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 # =========================================================================
-# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (ERROR CONTAINER MOCK)
+# 👑 CORE ENVIRONMENT RUNTIME INITIALIZATION DEPENDENCIES (SQL CORE MOCK MAPS)
 # =========================================================================
 import os
 import sys
@@ -23,15 +23,19 @@ try:
     pg8000.paramstyle = 'format'
     pg8000.__version__ = "2.9.9"
     
-    # KUKOSORA NKURU: Kurema fake sub-modules zose Django ishingiyeho ngo errors zizime burundu
+    # KUKOSORA NKURU: Kurema fake sub-modules zose Django ishingiyeho muli psycopg dependencies
     import types
     fake_errors = types.ModuleType('errors')
+    fake_sql = types.ModuleType('sql')
+    
     pg8000.errors = fake_errors
+    pg8000.sql = fake_sql
     
     sys.modules['psycopg2'] = pg8000
     sys.modules['psycopg2.extensions'] = pg8000
     sys.modules['psycopg2.extras'] = pg8000
     sys.modules['psycopg2.errors'] = fake_errors
+    sys.modules['psycopg2.sql'] = fake_sql
     
     pg8000.extensions = pg8000
     pg8000.extras = pg8000
@@ -40,6 +44,7 @@ except (ImportError, AttributeError, NameError, KeyError):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 
