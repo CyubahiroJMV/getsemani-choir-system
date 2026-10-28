@@ -72,14 +72,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+# =========================================================================
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
+# =========================================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
+        'PORT': '5432',
     }
 }
+
+# Kukosora Nkuru: Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python configuration handles
+import sys
+try:
+    import pg8000
+    pg8000.DBAPI.paramstyle = 'format'
+    sys.modules['psycopg2'] = pg8000
+except ImportError:
+    pass
 
 
 # Password validation
