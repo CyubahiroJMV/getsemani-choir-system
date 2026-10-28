@@ -72,10 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DISK ENGINE)
-# =========================================================================
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASES = {
