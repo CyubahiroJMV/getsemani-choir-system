@@ -3,3 +3,4 @@ gunicorn
 requests
 whitenoise
 reportlab
+pg8000
