@@ -74,8 +74,6 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA MATRIX)
 # =========================================================================
-import os
-from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
