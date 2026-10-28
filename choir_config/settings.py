@@ -69,7 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
-
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
 # =========================================================================
@@ -82,8 +81,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
