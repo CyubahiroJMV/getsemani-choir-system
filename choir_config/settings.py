@@ -71,19 +71,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA MATRIX)
-# =========================================================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 
+# =========================================================================
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PSYCOPG3 NATIVE INTERACTION)
+# =========================================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
+        'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
