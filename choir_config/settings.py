@@ -68,7 +68,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE PERMANENT RE-ALIGNED)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -81,14 +81,16 @@ DATABASES = {
     }
 }
 
-# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
+# Kukosora Nkuru: Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python configuration handles
 import sys
 try:
     import pg8000
-    pg8000.DBAPI.paramstyle = 'format'
+    # KUKOSORA NKURU: Gukoresha paramstyle y'ukuri buringane nta crash na kura imwe muli Linux
+    pg8000.paramstyle = 'format'
     sys.modules['psycopg2'] = pg8000
-except ImportError:
+except (ImportError, AttributeError):
     pass
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
