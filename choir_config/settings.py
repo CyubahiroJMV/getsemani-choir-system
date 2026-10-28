@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
 import os
 import dj_database_url
 from pathlib import Path
@@ -73,25 +72,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
+# =========================================================================
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DISK ENGINE)
+# =========================================================================
 
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE + PG8000 INTERACTION)
-# =========================================================================
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PSYCOPG3 NATIVE INTERACTION)
-# =========================================================================
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.tsnnlhgpwqwtertchoal',
-        'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 
 
 # Password validation
