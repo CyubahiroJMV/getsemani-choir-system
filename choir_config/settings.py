@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PURE PYTHON PG8000 DRIVER)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE EXTERNAL TCP FIXED)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -85,15 +85,12 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres.tsnnlhgpwqwtertchoal',
         'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
+        'HOST': '://supabase.com',  # KUKOSORA NKURU: Inzira y'ukuri handles
         'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
     }
 }
 
-# Kukosora Nkuru: Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python array handles
+# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
 import sys
 try:
     import pg8000
