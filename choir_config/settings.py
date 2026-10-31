@@ -75,11 +75,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD POSTGRES REGISTRY)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE EXTERNAL TCP FIXED)
 # =========================================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres.tsnnlhgpwqwtertchoal',
         'PASSWORD': 'Getseman!2026',
