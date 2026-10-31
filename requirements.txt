@@ -3,4 +3,5 @@ gunicorn
 requests
 whitenoise
 reportlab
-psycopg[binary]
+psycopg2-binary
+
