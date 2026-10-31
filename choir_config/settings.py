@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 # Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python configuration handles
 import os
-import dj_database_url
 import sys
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
