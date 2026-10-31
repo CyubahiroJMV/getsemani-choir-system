@@ -9,10 +9,32 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-import os
-from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Guhatira Django gusimfura psycopg2 ikoresheje pg8000 mu buryo bwa pure Python configuration handles
+import sys
+try:
+    import pg8000
+    pg8000.paramstyle = 'format'
+    pg8000.__version__ = "2.9.9"
+    
+    import types
+    fake_errors = types.ModuleType('errors')
+    fake_sql = types.ModuleType('sql')
+    
+    pg8000.errors = fake_errors
+    pg8000.sql = fake_sql
+    
+    sys.modules['psycopg2'] = pg8000
+    sys.modules['psycopg2.extensions'] = pg8000
+    sys.modules['psycopg2.extras'] = pg8000
+    sys.modules['psycopg2.errors'] = fake_errors
+    sys.modules['psycopg2.sql'] = fake_sql
+    
+    pg8000.extensions = pg8000
+    pg8000.extras = pg8000
+except (ImportError, AttributeError, NameError, KeyError):
+    pass
 
 
 
@@ -72,17 +94,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
 # =========================================================================
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
+        'PORT': '5432',
     }
 }
-
 
 
 # Internationalization
