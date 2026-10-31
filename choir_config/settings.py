@@ -12,14 +12,6 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
-import sys
-try:
-    import pg8000
-    pg8000.paramstyle = 'format'
-    sys.modules['psycopg2'] = pg8000
-except (ImportError, AttributeError, NameError):
-    pass
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,9 +70,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
-
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PSYCOPG3 NATIVE INTERACTION)
 # =========================================================================
 DATABASES = {
     'default': {
