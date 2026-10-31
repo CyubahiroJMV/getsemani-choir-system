@@ -72,15 +72,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE EXTERNAL TCP FIXED)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
 # =========================================================================
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
+        'PORT': '5432',
     }
 }
+
+# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
+import sys
+try:
+    import pg8000
+    pg8000.paramstyle = 'format'
+    sys.modules['psycopg2'] = pg8000
+except (ImportError, AttributeError, NameError):
+    pass
 
 
 # Internationalization
