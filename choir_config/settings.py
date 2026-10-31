@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 from pathlib import Path
+import sys
+try:
+    import pg8000
+    pg8000.paramstyle = 'format'
+    sys.modules['psycopg2'] = pg8000
+except (ImportError, AttributeError, NameError):
+    pass
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -84,15 +92,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-# Hatira Django gukoresha pg8000 nka native backend driver ngo psycopg2 ikureho umutego burundu
-import sys
-try:
-    import pg8000
-    pg8000.paramstyle = 'format'
-    sys.modules['psycopg2'] = pg8000
-except (ImportError, AttributeError, NameError):
-    pass
 
 
 # Internationalization
