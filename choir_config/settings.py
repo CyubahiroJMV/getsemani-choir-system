@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres.tsnnlhgpwqwtertchoal',
         'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',  # KUKOSORA NKURU: Inzira y'ukuri handles
+        'HOST': '://supabase.com',
         'PORT': '5432',
     }
 }
