@@ -74,7 +74,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (PERMANENT SUPABASE CLUSTER)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE EXTERNAL TCP FIXED)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres.tsnnlhgpwqwtertchoal',
         'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
+        'HOST': '://supabase.com',  # KUKOSORA NKURU: Inzira y'ukuri handles
         'PORT': '5432',
     }
 }
