@@ -13,9 +13,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -76,14 +74,11 @@ WSGI_APPLICATION = 'choir_config.wsgi.application'
 # =========================================================================
 # 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE EXTERNAL TCP FIXED)
 # =========================================================================
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.tsnnlhgpwqwtertchoal',
-        'PASSWORD': 'Getseman!2026',
-        'HOST': '://supabase.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
