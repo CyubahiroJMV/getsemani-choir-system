@@ -76,7 +76,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS WITH SSL)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS MASTER ROUTE)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -84,14 +84,13 @@ DATABASES = {
         'NAME': 'neondb',
         'USER': 'neondb_owner',
         'PASSWORD': 'npg_6cR8vOnFThsW',
-        'HOST': 'ep-cool-butterfly-a5f11v0w-pooler.us-east-1.aws.neon.tech',
+        'HOST': 'ep-cool-butterfly-a5f11v0w.us-east-1.aws.neon.tech',  # KUKOSORA NKURU: Inzira idasanzwe ya Pooler endpoint usesuye handles!
         'PORT': '5432',
         'OPTIONS': {
-            'sslmode': 'require',  # KUKOSORA NKURU: Guhatira umuyoboro gukoresha uburinzi bwa SSL handles!
+            'sslmode': 'require',
         },
     }
 }
-
 
 
 # Internationalization
