@@ -76,7 +76,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS PERMANENT DISK)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS ENFORCED)
 # =========================================================================
 DATABASES = {
     'default': {
@@ -88,6 +88,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
