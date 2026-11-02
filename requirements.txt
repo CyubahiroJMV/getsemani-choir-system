@@ -2,9 +2,6 @@ django
 gunicorn
 requests
 whitenoise
-reportlab
-<<<<<<< HEAD
-=======
 psycopg2-binary
 
->>>>>>> 0f21ea4c22b87c98a14b4c1abc10985cc3c86d39
+
