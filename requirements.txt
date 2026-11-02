@@ -2,6 +2,5 @@ django
 gunicorn
 requests
 whitenoise
+reportlab
 psycopg2-binary
-
-
