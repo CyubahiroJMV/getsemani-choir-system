@@ -11,9 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
-# =========================================================================
+
 import os
 from pathlib import Path
 
@@ -74,21 +72,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
+# =========================================================================
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
+# =========================================================================
 
-# =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS MASTER ROUTE)
-# =========================================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_6cR8vOnFThsW',
-        'HOST': 'ep-cool-butterfly-a5f11v0w.us-east-1.aws.neon.tech',  # KUKOSORA NKURU: Inzira idasanzwe ya Pooler endpoint usesuye handles!
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
