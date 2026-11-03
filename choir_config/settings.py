@@ -10,45 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 import os
-import sys
 from pathlib import Path
 
-# =========================================================================
 # 👑 BASE DIRECTORY LAYOUT AND ENVIRONMENT FRAMEWORK DETECTION
-# =========================================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# =========================================================================
-# 👑 DATABASE ADAPTER INTEGRATION MATRIX (PURE COMPATIBILITY ENGINE MULTI-MOCK)
-# =========================================================================
-try:
-    import pg8000
-    pg8000.paramstyle = 'format'
-    pg8000.__version__ = "2.9.9"
-    
-    import types
-    fake_errors = types.ModuleType('errors')
-    fake_sql = types.ModuleType('sql')
-    
-    pg8000.errors = fake_errors
-    pg8000.sql = fake_sql
-    
-    sys.modules['psycopg2'] = pg8000
-    sys.modules['psycopg2.extensions'] = pg8000
-    sys.modules['psycopg2.extras'] = pg8000
-    sys.modules['psycopg2.errors'] = fake_errors
-    sys.modules['psycopg2.sql'] = fake_sql
-    
-    pg8000.extensions = pg8000
-    pg8000.extras = pg8000
-except (ImportError, AttributeError, NameError, KeyError):
-    pass
-
-# =========================================================================
-# 🔑 SECURITY CRYPTOGRAPHIC KEY SEGMENT (HANZE YA TRY BLOCK BURUNDU)
-# =========================================================================
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-a!ncmqkqy3s!bz!!^k2ev9^mhft4j1wj-mna%ahrs(cacr2-c')
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -100,7 +65,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS MASTER MATRIX)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS PERMANENT CLUSTER)
 # =========================================================================
 DATABASES = {
     'default': {
