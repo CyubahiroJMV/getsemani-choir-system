@@ -74,19 +74,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS MASTER ROUTE)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE PERMANENT RE-ALIGNED)
 # =========================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_m7y8uV1YpTda',  # KUKOSORA NKURU: Password nshya y'umwimerere handles!
-        'HOST': 'ep-cool-butterfly-a5f11v0w-pooler.us-east-1.aws.neon.tech',
+        'NAME': 'postgres',
+        'USER': 'postgres.tsnnlhgpwqwtertchoal',
+        'PASSWORD': 'Getseman!2026',
+        'HOST': '://supabase.com',
         'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
     }
 }
 
