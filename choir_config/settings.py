@@ -65,14 +65,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS PERMANENT CLUSTER)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS MASTER ROUTE)
 # =========================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'neondb',
         'USER': 'neondb_owner',
-        'PASSWORD': 'npg_6cR8vOnFThsW',
+        'PASSWORD': 'npg_m7y8uV1YpTda',  # KUKOSORA NKURU: Password nshya y'umwimerere handles!
         'HOST': 'ep-cool-butterfly-a5f11v0w-pooler.us-east-1.aws.neon.tech',
         'PORT': '5432',
         'OPTIONS': {
