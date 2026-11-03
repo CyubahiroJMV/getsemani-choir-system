@@ -73,13 +73,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (STANDARD SQLITE DATA REGISTRY)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (NEON SERVERLESS PERMANENT CLUSTER)
 # =========================================================================
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_6cR8vOnFThsW',
+        'HOST': 'ep-cool-butterfly-a5f11v0w-pooler.us-east-1.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
