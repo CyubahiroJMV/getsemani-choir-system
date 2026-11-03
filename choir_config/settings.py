@@ -10,36 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
-
-
 import os
 import sys
-import types
+from pathlib import Path
+
+# 👑 CORE PLATFORM ENVIRONMENT PATHWAY DETERMINATION
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# =========================================================================
+# 👑 DATABASE ADAPTER INTEGRATION MATRIX (PURE COMPATIBILITY ENGINE MULTI-MOCK)
+# =========================================================================
 try:
     import pg8000
     pg8000.paramstyle = 'format'
     pg8000.__version__ = "2.9.9"
     
     import types
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-
     fake_errors = types.ModuleType('errors')
     fake_sql = types.ModuleType('sql')
-    pg8000.errors = fake_errors
-    pg8000.sql = fake_sql
-    
-    sys.modules['psycopg2'] = pg8000
-    sys.modules['psycopg2.extensions'] = pg8000
-    sys.modules['psycopg2.extras'] = pg8000
-    sys.modules['psycopg2.errors'] = fake_errors
-    sys.modules['psycopg2.sql'] = fake_sql
-    
-    pg8000.extensions = pg8000
-    pg8000.extras = pg8000
-except (ImportError, AttributeError, NameError, KeyError):
-    pass
-
 
 
 # Quick-start development settings - unsuitable for production
