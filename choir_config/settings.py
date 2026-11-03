@@ -20,8 +20,7 @@ try:
     pg8000.paramstyle = 'format'
     pg8000.__version__ = "2.9.9"
     
-import types
-    # 👑 LOGIC RE-ALIGNMENT: RE-DEFINING THE PROJECT PATH TO FIX THE NAMEERROR INSTANTLY
+    import types
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
