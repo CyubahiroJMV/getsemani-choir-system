@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 import os
 import sys
+import types
 try:
     import pg8000
     pg8000.paramstyle = 'format'
