@@ -20,7 +20,11 @@ try:
     pg8000.paramstyle = 'format'
     pg8000.__version__ = "2.9.9"
     
-    import types
+import types
+    # 👑 LOGIC RE-ALIGNMENT: RE-DEFINING THE PROJECT PATH TO FIX THE NAMEERROR INSTANTLY
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
     fake_errors = types.ModuleType('errors')
     fake_sql = types.ModuleType('sql')
     pg8000.errors = fake_errors
