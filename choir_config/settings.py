@@ -74,7 +74,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'choir_config.wsgi.application'
 
 # =========================================================================
-# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE PERMANENT RE-ALIGNED)
+# 🗄️ PRODUCTION DATABASE ENGINE CONFIGURATION (SUPABASE CLUSTER VERIFIED)
 # =========================================================================
 DATABASES = {
     'default': {
