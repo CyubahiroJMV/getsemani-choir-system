@@ -36,7 +36,15 @@ def index(request):
             phone='0780000000'
         )
         
-    return render(request, 'choir_app/index.html')
+    # Gukurura indirimbo ziheruka muri database ngo zijye ku ncamake
+    songs = Song.objects.all().order_by('-id')[:5]
+    
+    context = {
+        'songs': songs,
+        'indirimbo': songs,
+    }
+    return render(request, 'choir_app/index.html', context)
+
 
 
 # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: WITH LIVE PENDING VERIFICATION SYSTEM)
