@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary_storage.storage import VideoMediaCloudinaryStorage
 
 # 1. URUTONDE RW'ABARIRIMBYI (MEMBER MODEL)
 class Member(models.Model):
@@ -21,7 +22,13 @@ class Song(models.Model):
     title = models.CharField(max_length=200)
     lyrics = models.TextField()
     # Hano twakosoye 'upload_to' mu buryo bw'ukuri bwa Django ngenderwaho
-    audio_file = models.FileField(upload_to='choir_audios/', blank=True, null=True)
+    audio_file = models.FileField(
+    upload_to='songs_audio/',
+    storage=VideoMediaCloudinaryStorage(),
+    blank=True,
+    null=True
+)
+
 
     def __str__(self):
         return self.title
