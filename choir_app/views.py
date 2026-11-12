@@ -159,8 +159,7 @@ def dashboard(request):
     context['selected_date'] = selected_date.strftime('%Y-%m-%d')
     context['present_count'] = present_count
     context['absent_count'] = absent_count
-
-        return render(request, 'choir_app/dashboard.html', {
+ return render(request, 'choir_app/dashboard.html', {
         'songs': songs,
         'members': members,
         'attendance_list': attendance_list,
@@ -171,7 +170,6 @@ def dashboard(request):
     })
 
 
-   
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
 def members_list(request):
