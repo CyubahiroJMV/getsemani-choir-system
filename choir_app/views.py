@@ -263,6 +263,19 @@ def toggle_attendance(request, member_id, date_str):
     return redirect(next_url)
 
 
+@login_required
+def update_attendance_reason(request, member_id, date_str):
+    if request.method == 'POST' and request.user.is_staff:
+        member = get_object_or_404(Member, id=member_id)
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        att, created = Attendance.objects.get_or_create(member=member, date=target_date)
+        att.reason = request.POST.get('reason', '')
+        att.save()
+    
+    next_url = request.POST.get('next', f"/panel/?date={date_str}")
+    return redirect(next_url)
+
+
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
 def songs_list(request):
