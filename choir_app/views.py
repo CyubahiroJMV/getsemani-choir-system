@@ -132,6 +132,37 @@ def dashboard(request):
     }
     return render(request, 'choir_app/dashboard_new.html', context) # (Koresha izina rya HTML yawe)
 
+    # --- GUKURURA UBWITABIRE (ABAJE N'ABATARAJE) ---
+    date_str = request.GET.get('date')
+    if date_str:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    else:
+        selected_date = timezone.localdate()
+
+    members = Member.objects.all()
+    attendance_list = []
+    present_count = 0
+    absent_count = 0
+
+    for member in members:
+        att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
+        if att.is_present:
+            present_count += 1
+        else:
+            absent_count += 1
+        attendance_list.append({
+            'member': member,
+            'is_present': att.is_present,
+        })
+
+    # Reba mu 'context' yari isanzwe muri dashboard yawe, wongereho ibi bine (4) bishya:
+    context['attendance_list'] = attendance_list
+    context['selected_date'] = selected_date.strftime('%Y-%m-%d')
+    context['present_count'] = present_count
+    context['absent_count'] = absent_count
+
+    return render(request, 'choir_app/dashboard.html', context) # (Koresha izina rya HTML ryari risanzwe hano)
+
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
 def members_list(request):
