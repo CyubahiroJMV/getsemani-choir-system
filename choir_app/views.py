@@ -18,7 +18,6 @@ from django.utils import timezone
 from datetime import datetime
 
 
-
 # 1. HOME PAGE
 # =========================================================================
 # 👑 AUTOMATED CRITICAL ADMINISTRATIVE ACCOUNT OVERRIDE INITIALIZATION ENGINE
@@ -102,21 +101,18 @@ def dashboard(request):
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
-def members_list(request): # (Koresha izina rya function y'urutonde rw'abaririmbyi yawe)
-    # 1. Fata itariki umukoresha yahisemo cyangwa ukoreshe iy'uyu munsi
+def members_list(request):
     date_str = request.GET.get('date')
     if date_str:
         selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     else:
         selected_date = timezone.localdate()
 
-    # 2. Shakisha umuririmbyi (Search query yari isanzweho)
     query = request.GET.get('q', '')
     members = Member.objects.all()
     if query:
         members = members.filter(name__icontains=query) | members.filter(voice__icontains=query)
 
-    # 3. Bika ubwitabire bwa buri muririmbyi kuri iyo tariki kandi ubare igiteranyo
     member_data = []
     present_count = 0
     absent_count = 0
@@ -132,6 +128,45 @@ def members_list(request): # (Koresha izina rya function y'urutonde rw'abaririmb
             'is_present': att.is_present,
         })
 
+    # === IGICE GIKORA PDF IYO BAKANZE KURI DOWNLOAD PDF REPORT ===
+    if request.GET.get('download_pdf') == '1':
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Getsemani_Attendance_{selected_date}.pdf"'
+        
+        p = canvas.Canvas(response, pagesize=letter)
+        p.setFont("Helvetica-Bold", 16)
+        p.drawString(50, 750, f"CHORALE GETSEMANI - RAPORO Y'UBWITABIRE ({selected_date})")
+        
+        p.setFont("Helvetica-Bold", 11)
+        p.drawString(50, 725, f"Abaje: {present_count}   |   Abataraje: {absent_count}   |   Igiteranyo: {present_count + absent_count}")
+        p.line(50, 715, 550, 715)
+        
+        y = 690
+        p.setFont("Helvetica-Bold", 10)
+        p.drawString(50, y, "No")
+        p.drawString(85, y, "Amazina y'Umuririmbyi")
+        p.drawString(260, y, "Telephone")
+        p.drawString(370, y, "Ijwi")
+        p.drawString(450, y, "Ubwitabire")
+        y -= 20
+        
+        p.setFont("Helvetica", 10)
+        for idx, item in enumerate(member_data, start=1):
+            status_text = "Yaje" if item['is_present'] else "Ntiyaje"
+            p.drawString(50, y, str(idx))
+            p.drawString(85, y, item['member'].name)
+            p.drawString(260, y, item['member'].phone)
+            p.drawString(370, y, item['member'].voice)
+            p.drawString(450, y, status_text)
+            y -= 20
+            if y < 50:
+                p.showPage()
+                y = 750
+                
+        p.showPage()
+        p.save()
+        return response
+
     context = {
         'member_data': member_data,
         'selected_date': selected_date.strftime('%Y-%m-%d'),
@@ -140,52 +175,6 @@ def members_list(request): # (Koresha izina rya function y'urutonde rw'abaririmb
         'query': query,
     }
     return render(request, 'choir_app/members.html', context)
-
-    # 📥 ACU GASHYA: NYAKURI ONE-CLICK PYTHON PDF GENERATOR ENGINE FOR MEMBERS LIST
-    if 'download_pdf' in request.GET:
-        buffer = io.BytesIO()
-        p = canvas.Canvas(buffer, pagesize=letter)
-        
-        # Inyandiko y'Umutwe wa Raporo (Header)
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(50, 750, "👥 URUTONDE RW'ABARIRIMBYI BOSE - CHORALE GETSEMANI")
-        p.line(50, 735, 550, 735)
-        
-        # Gutondeka imitwe y'imbonerahamwe (Table Headers)
-        p.setFont("Helvetica-Bold", 11)
-        p.drawString(50, 710, "No")
-        p.drawString(90, 710, "Amazina y'Umuririmbyi")
-        p.drawString(320, 710, "Telephone Number")
-        p.drawString(470, 710, "Ijwi aririmba")
-        p.line(50, 700, 550, 700)
-        
-        # Kwinjiza amakuru y'abaririmbyi kamwe ku kande (Table Body Logic)
-        y = 680
-        p.setFont("Helvetica", 10)
-        for i, member in enumerate(members, start=1):
-            if y < 50: # Kurema paji nshya niba abaririmbyi ari benshi cyane
-                p.showPage()
-                p.setFont("Helvetica", 10)
-                y = 750
-            
-            p.drawString(50, y, f"({i})")
-            p.drawString(90, y, str(member.name))
-            
-            phone_text = str(member.phone) if member.phone else "No phone number found"
-            p.drawString(320, y, phone_text)
-            p.drawString(470, y, str(member.voice))
-            y -= 22
-            
-        p.showPage()
-        p.save()
-        
-        buffer.seek(0)
-        response = HttpResponse(buffer, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="Urutonde_rw_Abaririmbyi_Getsemani.pdf"'
-        return response
-        
-    return render(request, 'choir_app/members.html', {'members': members, 'query': query})
-
 
 @login_required(login_url='/login/')
 def toggle_attendance(request, member_id, date_str):
