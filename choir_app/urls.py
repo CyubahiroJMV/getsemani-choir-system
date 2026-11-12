@@ -4,7 +4,8 @@ from . import views
 urlpatterns = [
     # 1. HOME PAGE
     path('', views.index, name='index'),
-    
+    path('toggle-attendance/<int:member_id>/<str:date_str>/', views.toggle_attendance, name='toggle_attendance'),
+
     # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (TWAHOYOYE INZIRA NGO NOT FOUND ZISHIRE)
     path('panel/', views.dashboard, name='dashboard'),
     
