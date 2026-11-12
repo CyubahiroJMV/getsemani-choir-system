@@ -98,6 +98,39 @@ def dashboard(request):
         'pending_users': pending_users, # Inyunguru nshya isunika abaser bafunze muli HTML
     }
     return render(request, 'choir_app/dashboard_new.html', context)
+    date_str = request.GET.get('date')
+    if date_str:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    else:
+        selected_date = timezone.localdate()
+
+    members = Member.objects.all()
+    attendance_list = []
+    present_count = 0
+    absent_count = 0
+
+    for member in members:
+        att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
+        if att.is_present:
+            present_count += 1
+        else:
+            absent_count += 1
+        attendance_list.append({
+            'member': member,
+            'is_present': att.is_present,
+        })
+
+    songs = Song.objects.all().order_by('-id')
+
+    context = {
+        'songs': songs,
+        'attendance_list': attendance_list,
+        'selected_date': selected_date.strftime('%Y-%m-%d'),
+        'present_count': present_count,
+        'absent_count': absent_count,
+        # Icyitonderwa: Niba mu 'context' yawe hari hasanzwe harimo ibindi bintu (nka 'pending_users'), byongeremo hano
+    }
+    return render(request, 'choir_app/panel.html', context) # (Koresha izina rya HTML yawe)
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
@@ -176,7 +209,7 @@ def members_list(request):
     }
     return render(request, 'choir_app/members.html', context)
 
-@login_required(login_url='/login/')
+@login_required
 def toggle_attendance(request, member_id, date_str):
     if request.method == 'POST' and request.user.is_staff:
         member = get_object_or_404(Member, id=member_id)
@@ -184,7 +217,10 @@ def toggle_attendance(request, member_id, date_str):
         att, created = Attendance.objects.get_or_create(member=member, date=target_date)
         att.is_present = not att.is_present
         att.save()
-    return redirect(f"/members/?date={date_str}")
+    
+    next_url = request.POST.get('next', f"/panel/?date={date_str}")
+    return redirect(next_url)
+
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
