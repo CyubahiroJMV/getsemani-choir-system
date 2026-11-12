@@ -190,14 +190,16 @@
     </div>
 
     <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead>
-            <tr style="background-color: #1e3a8a; color: white;">
-                <th style="padding: 10px;">No</th>
-                <th style="padding: 10px;">Amazina y'Umuririmbyi</th>
-                <th style="padding: 10px;">Ijwi</th>
-                <th style="padding: 10px;">Ubwitabire ({{ selected_date }})</th>
-            </tr>
-        </thead>
+       <thead>
+    <tr style="background-color: #1e3a8a; color: white;">
+        <th style="padding: 10px;">No</th>
+        <th style="padding: 10px;">Amazina y'Umuririmbyi</th>
+        <th style="padding: 10px;">Ijwi</th>
+        <th style="padding: 10px;">Ubwitabire ({{ selected_date }})</th>
+        <th style="padding: 10px;">Impamvu (Niba ataje)</th>
+    </tr>
+</thead>
+
         <tbody>
             {% for item in attendance_list %}
             <tr style="border-bottom: 1px solid #e2e8f0;">
