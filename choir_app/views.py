@@ -130,7 +130,7 @@ def dashboard(request):
         'absent_count': absent_count,
         # Icyitonderwa: Niba mu 'context' yawe hari hasanzwe harimo ibindi bintu (nka 'pending_users'), byongeremo hano
     }
-    return render(request, 'choir_app/panel.html', context) # (Koresha izina rya HTML yawe)
+    return render(request, 'choir_app/dashboard_new.html', context) # (Koresha izina rya HTML yawe)
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
