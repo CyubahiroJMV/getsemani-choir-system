@@ -163,6 +163,71 @@
                     {% endfor %}
                 </div>
 
+                <!-- AKAZU KO KUGENZURA ABAJE N'ABATARAJE KURI DASHBOARD -->
+<div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 25px;">
+    <h3 style="margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+        📋 Kugenzura Ubwitabire (Abaje n'Abataraje)
+    </h3>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px;">
+        <form method="GET" action="" style="display: flex; align-items: center; gap: 10px; margin: 0;">
+            <label for="date" style="font-weight: bold; color: #334155;">📅 Itariki:</label>
+            <input type="date" id="date" name="date" value="{{ selected_date }}" 
+                   style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <button type="submit" style="background-color: #2563eb; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                Reba
+            </button>
+        </form>
+
+        <div style="display: flex; gap: 12px;">
+            <span style="background: #dcfce7; color: #166534; padding: 8px 14px; border-radius: 8px; font-weight: bold;">
+                ✅ Abaje: {{ present_count }}
+            </span>
+            <span style="background: #fee2e2; color: #991b1b; padding: 8px 14px; border-radius: 8px; font-weight: bold;">
+                ❌ Abataraje: {{ absent_count }}
+            </span>
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="background-color: #1e3a8a; color: white;">
+                <th style="padding: 10px;">No</th>
+                <th style="padding: 10px;">Amazina y'Umuririmbyi</th>
+                <th style="padding: 10px;">Ijwi</th>
+                <th style="padding: 10px;">Ubwitabire ({{ selected_date }})</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in attendance_list %}
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 10px;">{{ forloop.counter }}</td>
+                <td style="padding: 10px; font-weight: bold;">{{ item.member.name }}</td>
+                <td style="padding: 10px;">{{ item.member.voice }}</td>
+                <td style="padding: 10px;">
+                    <form method="POST" action="{% url 'toggle_attendance' item.member.id selected_date %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="/panel/?date={{ selected_date }}">
+                        <button type="submit" style="border: none; background: none; cursor: pointer; padding: 0;">
+                            {% if item.is_present %}
+                                <span style="background-color: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 15px; font-weight: bold;">
+                                    ✅ Yaje
+                                </span>
+                            {% else %}
+                                <span style="background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 15px; font-weight: bold;">
+                                    ❌ Ntiyaje
+                                </span>
+                            {% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
                 <!-- B. URUTONDE RW'ABARIRIMBYI -->
                 <div class="content-card">
                                     <!-- =========================================================================
