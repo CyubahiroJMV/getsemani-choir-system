@@ -13,6 +13,8 @@ urlpatterns = [
     path('songs/', views.songs_list, name='songs_list'),
     path('contributions/', views.contributions_list, name='contributions_list'),
     path('toggle-attendance/<int:member_id>/<str:date_str>/', views.toggle_attendance, name='toggle_attendance'),
+    path('update-reason/<int:member_id>/<str:date_str>/', views.update_attendance_reason, name='update_attendance_reason'),
+
     
     # 4. EDIT & DELETE ACTIONS FOR SONGS
     path('delete-song/<int:song_id>/', views.delete_song, name='delete_song'),
