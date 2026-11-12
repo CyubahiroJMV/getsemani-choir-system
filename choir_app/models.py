@@ -37,8 +37,8 @@ class Contribution(models.Model):
 
     def __str__(self):
         return f"{self.member.name} - {self.purpose} ({self.amount} RWF)"
-
-# 4. ATTENDANCE MODEL
+        
+# 4. UBWITABIRE (Attendance MODEL)
 class Attendance(models.Model):
     REASON_CHOICES = [
         ('', 'Hitamo impamvu...'),
@@ -48,12 +48,13 @@ class Attendance(models.Model):
         ('Impamvu bwite', 'Impamvu bwite'),
         ('Nta mpamvu ifatika', 'Nta mpamvu ifatika'),
     ]
+
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField(default=timezone.now)
     is_present = models.BooleanField(default=False)
     reason = models.CharField(max_length=100, choices=REASON_CHOICES, blank=True, default='')
 
-     class Meta:
+    class Meta:
         unique_together = ('member', 'date')
 
     def __str__(self):
