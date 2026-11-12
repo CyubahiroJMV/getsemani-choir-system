@@ -1,5 +1,6 @@
 from django.db import models
 from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+from django.utils import timezone
 
 # 1. URUTONDE RW'ABARIRIMBYI (MEMBER MODEL)
 class Member(models.Model):
@@ -12,7 +13,6 @@ class Member(models.Model):
     name = models.CharField(max_length=200)
     voice = models.CharField(max_length=50, choices=VOICE_CHOICES)
     phone = models.CharField(max_length=20, blank=True, null=True)
-
 
     def __str__(self):
         return f"{self.name} ({self.voice})"
@@ -45,13 +45,12 @@ class Contribution(models.Model):
 
 # 4. ATTENDANCE MODEL
 class Attendance(models.Model):
-    STATUS_CHOICES = [
-        ('Present', 'Present'),
-        ('Absent', 'Absent'),
-    ]
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='attendances')
+    date = models.DateField(default=timezone.now)
+    is_present = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('member', 'date')  # Bibuza kwandika umuririmbyi umwe kabiri ku itariki imwe
 
     def __str__(self):
-        return f"{self.member.name} - {self.date} ({self.status})"
+        return f"{self.member.name} - {self.date}"
