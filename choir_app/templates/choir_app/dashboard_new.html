@@ -223,6 +223,26 @@
                         </button>
                     </form>
                 </td>
+                <td style="padding: 10px;">
+    {% if not item.is_present %}
+        <form method="POST" action="{% url 'update_attendance_reason' item.member.id selected_date %}" style="margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="/panel/?date={{ selected_date }}">
+            <select name="reason" onchange="this.form.submit()" 
+                    style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fffbeb; color: #92400e; font-weight: bold; cursor: pointer;">
+                <option value="" {% if not item.reason %}selected{% endif %}>-- Hitamo impamvu --</option>
+                <option value="Arwaye" {% if item.reason == 'Arwaye' %}selected{% endif %}>🏥 Arwaye</option>
+                <option value="Afite uruhushya" {% if item.reason == 'Afite uruhushya' %}selected{% endif %}>📝 Afite uruhushya</option>
+                <option value="Impamvu z'akazi" {% if item.reason == "Impamvu z'akazi" %}selected{% endif %}>💼 Impamvu z'akazi</option>
+                <option value="Impamvu bwite" {% if item.reason == 'Impamvu bwite' %}selected{% endif %}>🏠 Impamvu bwite</option>
+                <option value="Nta mpamvu ifatika" {% if item.reason == 'Nta mpamvu ifatika' %}selected{% endif %}>⚠️ Nta mpamvu ifatika</option>
+            </select>
+        </form>
+    {% else %}
+        <span style="color: #64748b; font-size: 0.9em;">— Yitabiriye —</span>
+    {% endif %}
+</td>
+
             </tr>
             {% endfor %}
         </tbody>
