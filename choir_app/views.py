@@ -256,7 +256,7 @@ def members_list(request):
     }
     return render(request, 'choir_app/members.html', context)
 
-@login_required
+@login_required(login_url='/login/')
 def toggle_attendance(request, member_id, date_str):
     if request.method == 'POST' and request.user.is_staff:
         member = get_object_or_404(Member, id=member_id)
@@ -269,7 +269,7 @@ def toggle_attendance(request, member_id, date_str):
     return redirect(next_url)
 
 
-@login_required
+@login_required(login_url='/login/')
 def update_attendance_reason(request, member_id, date_str):
     if request.method == 'POST' and request.user.is_staff:
         member = get_object_or_404(Member, id=member_id)
