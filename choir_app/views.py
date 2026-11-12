@@ -180,6 +180,8 @@ def dashboard(request):
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
 def members_list(request):
+    with connection.cursor() as cursor:
+    cursor.execute("ALTER TABLE choir_app_attendance ADD COLUMN IF NOT EXISTS reason VARCHAR(100) DEFAULT '';")
     date_str = request.GET.get('date')
     if date_str:
         selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
