@@ -4,18 +4,13 @@ from django.utils import timezone
 
 # 1. URUTONDE RW'ABARIRIMBYI (MEMBER MODEL)
 class Member(models.Model):
-    VOICE_CHOICES = [
-        ('Soprano', 'Soprano'),
-        ('Alto', 'Alto'),
-        ('Tenor', 'Tenor'),
-        ('Bass', 'Bass'),
-    ]
-    name = models.CharField(max_length=200)
-    voice = models.CharField(max_length=50, choices=VOICE_CHOICES)
-    phone = models.CharField(max_length=20, blank=True, null=True)
+    name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=20)
+    voice = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.name} ({self.voice})"
+        return self.name
+
 
 # 2. INBOX Y'INDIRIMBO (SONG MODEL) — HANO IKOSA RYAKUWEHO BURUNDU!
 class Song(models.Model):
