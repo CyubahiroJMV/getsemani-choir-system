@@ -152,7 +152,9 @@ def dashboard(request):
         attendance_list.append({
             'member': member,
             'is_present': att.is_present,
+            'reason': att.reason,
         })
+
 
     # === ONGERA IBI BINE (4) MURI 'context' YARI ISANZWE MURI DASHBOARD YAWE ===
     context['attendance_list'] = attendance_list
