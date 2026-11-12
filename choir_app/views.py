@@ -6,12 +6,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
-from .models import Member, Song, Contribution
+from .models import Member, Song, Contribution, Attendance
 from .forms import MemberForm, SongForm, ContributionForm, AttendanceForm, AdminRegisterForm, AdminLoginForm
 from django.db.models import Sum
 from django.core.mail import get_connection, EmailMessage
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import datetime
+
 
 
 # 1. HOME PAGE
@@ -97,13 +102,44 @@ def dashboard(request):
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
-def members_list(request):
-    query = request.GET.get('q', '')
-    
-    if query:
-        members = Member.objects.filter(name__icontains=query) | Member.objects.filter(voice__icontains=query)
+def members_list(request): # (Koresha izina rya function y'urutonde rw'abaririmbyi yawe)
+    # 1. Fata itariki umukoresha yahisemo cyangwa ukoreshe iy'uyu munsi
+    date_str = request.GET.get('date')
+    if date_str:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     else:
-        members = Member.objects.all()
+        selected_date = timezone.localdate()
+
+    # 2. Shakisha umuririmbyi (Search query yari isanzweho)
+    query = request.GET.get('q', '')
+    members = Member.objects.all()
+    if query:
+        members = members.filter(name__icontains=query) | members.filter(voice__icontains=query)
+
+    # 3. Bika ubwitabire bwa buri muririmbyi kuri iyo tariki kandi ubare igiteranyo
+    member_data = []
+    present_count = 0
+    absent_count = 0
+
+    for member in members:
+        att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
+        if att.is_present:
+            present_count += 1
+        else:
+            absent_count += 1
+        member_data.append({
+            'member': member,
+            'is_present': att.is_present,
+        })
+
+    context = {
+        'member_data': member_data,
+        'selected_date': selected_date.strftime('%Y-%m-%d'),
+        'present_count': present_count,
+        'absent_count': absent_count,
+        'query': query,
+    }
+    return render(request, 'choir_app/members.html', context)
 
     # 📥 ACU GASHYA: NYAKURI ONE-CLICK PYTHON PDF GENERATOR ENGINE FOR MEMBERS LIST
     if 'download_pdf' in request.GET:
@@ -150,6 +186,16 @@ def members_list(request):
         
     return render(request, 'choir_app/members.html', {'members': members, 'query': query})
 
+
+@login_required(login_url='/login/')
+def toggle_attendance(request, member_id, date_str):
+    if request.method == 'POST' and request.user.is_staff:
+        member = get_object_or_404(Member, id=member_id)
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        att, created = Attendance.objects.get_or_create(member=member, date=target_date)
+        att.is_present = not att.is_present
+        att.save()
+    return redirect(f"/members/?date={date_str}")
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MASTER SEARCH ENGINE ENGINE Y'UBWIZA)
 @login_required(login_url='/login/')
@@ -456,3 +502,5 @@ def verify_user(request, user_id):
             
     messages.success(request, f"Konti ya {user_to_verify.username} yamaze kwemezwa neza muli database usesuye!")
     return redirect('/panel/')
+
+
