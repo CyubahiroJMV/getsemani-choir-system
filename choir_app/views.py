@@ -130,9 +130,9 @@ def dashboard(request):
         'absent_count': absent_count,
         # Icyitonderwa: Niba mu 'context' yawe hari hasanzwe harimo ibindi bintu (nka 'pending_users'), byongeremo hano
     }
-    return render(request, 'choir_app/dashboard_new.html', context) # (Koresha izina rya HTML yawe)
+   
 
-    # --- GUKURURA UBWITABIRE (ABAJE N'ABATARAJE) ---
+   # 2. Gukurura ubwitabire (Abaje n'Abataraje)
     date_str = request.GET.get('date')
     if date_str:
         selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -155,13 +155,18 @@ def dashboard(request):
             'is_present': att.is_present,
         })
 
-    # Reba mu 'context' yari isanzwe muri dashboard yawe, wongereho ibi bine (4) bishya:
-    context['attendance_list'] = attendance_list
-    context['selected_date'] = selected_date.strftime('%Y-%m-%d')
-    context['present_count'] = present_count
-    context['absent_count'] = absent_count
-
-    return render(request, 'choir_app/dashboard.html', context) # (Koresha izina rya HTML ryari risanzwe hano)
+    # 3. Shaka 'context' yari isanzwe hasi muri dashboard yawe, wongereho ibi bine (4):
+    # Niba utari ufite 'context = {...}', koresha iyi ikurikira:
+    songs = Song.objects.all().order_by('-id')
+    context = {
+        'songs': songs,
+        'members': members,
+        'attendance_list': attendance_list,
+        'selected_date': selected_date.strftime('%Y-%m-%d'),
+        'present_count': present_count,
+        'absent_count': absent_count,
+    }
+    return render(request, 'choir_app/dashboard.html', context)
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
