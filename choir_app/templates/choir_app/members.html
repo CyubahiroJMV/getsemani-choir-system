@@ -70,83 +70,91 @@
         </div>
     </div>
 
-    <!-- 2. RIGHT MASTER MAIN AREA -->
-    <div class="main-workspace">
-        <div class="container-box">
-            <h3>📷 Urutonde rw'Abaririmbyi bose</h3>
-            
-            <!-- FOMU NKURU Y'ISHAKISHA RY'ABARIRIMBYI -->
-           <form method="GET" action="" style="display: flex; align-items: center; gap: 10px;">
-        <label for="date" style="font-weight: bold; color: #1e293b;">📅 Itariki ya Repetition:</label>
-        <input type="date" id="date" name="date" value="{{ selected_date }}" 
-               style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
-        <button type="submit" style="background-color: #2563eb; color: white; border: none; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">
-            🔍 Reba Ubwitabire
-        </button>
-<div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
-    <a href="?q={{ query }}&download_pdf=1" style="background: #16a34a; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 0.95em; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
-        📥 Download PDF Report
-    </a>
-</div>
-            </form>
-            <!-- Igiteranyo cy'abaje n'abataraje -->
-    <div style="display: flex; gap: 15px;">
-        <span style="background: #d1fae5; color: #065f46; padding: 8px 15px; border-radius: 8px; font-weight: bold;">
-            ✅ Abaje: {{ present_count }}
-        </span>
-        <span style="background: #fee2e2; color: #991b1b; padding: 8px 15px; border-radius: 8px; font-weight: bold;">
-            ❌ Abataraje: {{ absent_count }}
-        </span>
+   <!-- Agapapuro k'umweru gafatanye byose hamwe -->
+<div style="background: rgba(255, 255, 255, 0.96); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 15px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; color: #1e293b;">📋 Urutonde rw'Abaririmbyi bose</h2>
+        <a href="{% url 'download_members_pdf' %}" style="background-color: #16a34a; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+            📥 Download PDF Report
+        </a>
     </div>
 
-</div>
-          <thead>
-    <tr>
-        <th>No</th>
-        <th>Amazina y'Umuririmbyi</th>
-        <th>Telephone Number</th>
-        <th>Ijwi aririmba</th>
-        <th>Ubwitabire ({{ selected_date }})</th>
-    </tr>
-</thead>
-<tbody>
-    {% for item in member_data %}
-    <tr>
-        <td>({{ forloop.counter }})</td>
-        <td>{{ item.member.name }}</td>
-        <td>{{ item.member.phone }}</td>
-        <td><span class="voice-badge">{{ item.member.voice }}</span></td>
-        <td>
-            {% if user.is_staff %}
-                <form method="POST" action="{% url 'toggle_attendance' item.member.id selected_date %}" style="margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" style="border: none; background: none; cursor: pointer; padding: 0;">
-                        {% if item.is_present %}
-                            <span style="background-color: #d1fae5; color: #065f46; padding: 5px 12px; border-radius: 15px; font-weight: bold;">
-                                ✅ Yaje
-                            </span>
-                        {% else %}
-                            <span style="background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 15px; font-weight: bold;">
-                                ❌ Ntiyaje
-                            </span>
-                        {% endif %}
-                    </button>
-                </form>
-            {% else %}
-                {% if item.is_present %}
-                    <span style="background-color: #d1fae5; color: #065f46; padding: 5px 12px; border-radius: 15px; font-weight: bold;">✅ Yaje</span>
-                {% else %}
-                    <span style="background-color: #fee2e2; color: #991b1b; padding: 5px 12px; border-radius: 15px; font-weight: bold;">❌ Ntiyaje</span>
-                {% endif %}
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
+    <!-- Akayunguruzo k'Itariki n'Igiteranyo -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; background: #f1f5f9; padding: 15px; border-radius: 10px; border: 1px solid #cbd5e1;">
+        <form method="GET" action="" style="display: flex; align-items: center; gap: 10px; margin: 0;">
+            <label for="date" style="font-weight: bold; color: #1e293b;">📅 Itariki ya Repetition:</label>
+            <input type="date" id="date" name="date" value="{{ selected_date }}" 
+                   style="padding: 8px 12px; border: 1px solid #94a3b8; border-radius: 6px; font-weight: bold;">
+            <button type="submit" style="background-color: #2563eb; color: white; border: none; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                🔍 Reba Ubwitabire
+            </button>
+        </form>
 
-            
+        <div style="display: flex; gap: 12px;">
+            <span style="background: #dcfce7; color: #166534; padding: 8px 15px; border-radius: 8px; font-weight: bold; border: 1px solid #86efac;">
+                ✅ Abaje: {{ present_count }}
+            </span>
+            <span style="background: #fee2e2; color: #991b1b; padding: 8px 15px; border-radius: 8px; font-weight: bold; border: 1px solid #fca5a5;">
+                ❌ Abataraje: {{ absent_count }}
+            </span>
         </div>
     </div>
+
+    <!-- Imbonerahamwe (Table) ifite isuku kandi iri imbere mu gapapuro k'umweru -->
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; background: white; border-radius: 8px; overflow: hidden;">
+            <thead>
+                <tr style="background-color: #1e3a8a; color: white;">
+                    <th style="padding: 12px 15px;">No</th>
+                    <th style="padding: 12px 15px;">Amazina y'Umuririmbyi</th>
+                    <th style="padding: 12px 15px;">Telephone Number</th>
+                    <th style="padding: 12px 15px;">Ijwi aririmba</th>
+                    <th style="padding: 12px 15px;">Ubwitabire ({{ selected_date }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in member_data %}
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 12px 15px; font-weight: bold; color: #475569;">({{ forloop.counter }})</td>
+                    <td style="padding: 12px 15px; font-weight: bold; color: #0f172a;">{{ item.member.name }}</td>
+                    <td style="padding: 12px 15px; color: #334155;">{{ item.member.phone }}</td>
+                    <td style="padding: 12px 15px;">
+                        <span style="background: #e0e7ff; color: #1e40af; padding: 4px 10px; border-radius: 12px; font-size: 0.9em; font-weight: bold;">
+                            {{ item.member.voice }}
+                        </span>
+                    </td>
+                    <td style="padding: 12px 15px;">
+                        {% if user.is_staff %}
+                            <form method="POST" action="{% url 'toggle_attendance' item.member.id selected_date %}" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" style="border: none; background: none; cursor: pointer; padding: 0;">
+                                    {% if item.is_present %}
+                                        <span style="background-color: #dcfce7; color: #166534; padding: 6px 14px; border-radius: 20px; font-weight: bold; display: inline-block; border: 1px solid #86efac;">
+                                            ✅ Yaje
+                                        </span>
+                                    {% else %}
+                                        <span style="background-color: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-weight: bold; display: inline-block; border: 1px solid #fca5a5;">
+                                            ❌ Ntiyaje
+                                        </span>
+                                    {% endif %}
+                                </button>
+                            </form>
+                        {% else %}
+                            {% if item.is_present %}
+                                <span style="background-color: #dcfce7; color: #166534; padding: 6px 14px; border-radius: 20px; font-weight: bold;">✅ Yaje</span>
+                            {% else %}
+                                <span style="background-color: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-weight: bold;">❌ Ntiyaje</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 </body>
 </html>
