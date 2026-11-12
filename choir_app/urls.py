@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     # 1. HOME PAGE
     path('', views.index, name='index'),
-    path('toggle-attendance/<int:member_id>/<str:date_str>/', views.toggle_attendance, name='toggle_attendance'),
 
     # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (TWAHOYOYE INZIRA NGO NOT FOUND ZISHIRE)
     path('panel/', views.dashboard, name='dashboard'),
@@ -13,6 +12,7 @@ urlpatterns = [
     path('members/', views.members_list, name='members_list'),
     path('songs/', views.songs_list, name='songs_list'),
     path('contributions/', views.contributions_list, name='contributions_list'),
+    path('toggle-attendance/<int:member_id>/<str:date_str>/', views.toggle_attendance, name='toggle_attendance'),
     
     # 4. EDIT & DELETE ACTIONS FOR SONGS
     path('delete-song/<int:song_id>/', views.delete_song, name='delete_song'),
