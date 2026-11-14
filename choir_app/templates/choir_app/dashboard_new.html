@@ -245,12 +245,17 @@
 </td>
 <td style="padding: 10px;">
     {% if item.member.phone %}
-     <a href="https://whatsapp.com{{ item.member.phone|slice:'1:' }}&text=Muraho%20{{ item.member.name|urlencode }}%2C%20konti%20yawe%20muri%20Chorale%20Getsemani%20yemejwe.%20Injira%20hano%3A%20https%3A%2F%://onrender.com%2Flogin%2F" 
-   target="_blank" 
-   rel="noopener noreferrer"
-   style="background-color: #25D366; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85em; display: inline-block;">
-    💬 Mumenyeshe
-</a>
+     {% if item.wa_link %}
+    <a href="{{ item.wa_link }}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background-color: #25D366; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85em; display: inline-block;">
+        💬 Mumenyeshe
+    </a>
+{% else %}
+    <span style="color: #94a3b8; font-size: 0.85em;">Nta nimero</span>
+{% endif %}
+
 
     {% else %}
         <span style="color: #94a3b8; font-size: 0.85em;">Nta nimero</span>
