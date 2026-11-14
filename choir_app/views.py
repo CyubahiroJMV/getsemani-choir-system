@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import datetime
 from django.db import connection
+from urllib.parse import quote
 
 
 
@@ -113,7 +114,28 @@ def dashboard(request):
             'is_present': att.is_present,
             'reason': att.reason,
         })
+ att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
+        if att.is_present:
+            present_count += 1
+        else:
+            absent_count += 1
 
+        # Tunganya nimero na link ya WhatsApp muri Python
+        clean_phone = ''.join(filter(str.isdigit, str(member.phone or '')))
+        if clean_phone.startswith('07'):
+            clean_phone = '250' + clean_phone[1:]
+        elif clean_phone.startswith('7'):
+            clean_phone = '250' + clean_phone
+        
+        msg = f"Muraho {member.name}, ubuyobozi bwa Chorale Getsemani bwemeje konti yawe. Ubu wakwinjira muri sisitemu: https://onrender.com"
+        wa_link = f"https://whatsapp.com{clean_phone}&text={quote(msg)}" if clean_phone else ""
+
+        attendance_list.append({
+            'member': member,
+            'is_present': att.is_present,
+            'reason': att.reason,
+            'wa_link': wa_link,
+        })
     context = {
         'members': members,
         'songs': songs,
