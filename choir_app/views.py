@@ -56,6 +56,12 @@ def index(request):
 # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: WITH LIVE PENDING VERIFICATION SYSTEM)
 @login_required(login_url='/login/')
 def dashboard(request):
+    # 1. Kurura imisanzu yose yinjijwe (Koresha izina rya model yawe nka Contribution)
+    contributions = Contribution.objects.all().order_by('-id')
+
+    # 2. Kurura abakoresha biyandikishije bategereje kwemezwa na Admin
+    pending_users = User.objects.filter(is_active=False)
+
     with connection.cursor() as cursor:
         cursor.execute("ALTER TABLE choir_app_attendance ADD COLUMN IF NOT EXISTS reason VARCHAR(100) DEFAULT '';")
     if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
@@ -176,6 +182,19 @@ def dashboard(request):
         # (Niba hari ibindi bintu byari birimo nka 'pending_users' cyangwa 'contributions', bigumishemo hano)
     })
 
+# 3. Huza byose muri 'context' yoherezwa kuri panel
+    context = {
+        'songs': songs,
+        'members': members,
+        'attendance_list': attendance_list,
+        'selected_date': selected_date.strftime('%Y-%m-%d'),
+        'present_count': present_count,
+        'absent_count': absent_count,
+        'contributions': contributions,      # Bigarura imisanzu mu kazu kayo
+        'imisanzu': contributions,           # Biringaniza niba HTML ikoresha 'imisanzu'
+        'pending_users': pending_users,      # Bigarura abategereje kwemezwa
+    }
+    return render(request, 'choir_app/dashboard.html', context) # (Koresha izina rya HTML yawe yari isanzwe)
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
