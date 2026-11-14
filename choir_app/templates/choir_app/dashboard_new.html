@@ -258,6 +258,27 @@
 
             </tr>
             {% endfor %}
+            <script>
+function openWhatsApp(phone, name) {
+    if (!phone) {
+        alert("Uyu muririmbyi nta nimero ya telefone afite!");
+        return;
+    }
+    // Tunganya nimero neza (ikureho imyanya niba ihari, itangire na 250)
+    let cleanPhone = phone.replace(/\s+/g, '');
+    if (cleanPhone.startsWith('07')) {
+        cleanPhone = '250' + cleanPhone.substring(1);
+    } else if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+    }
+    
+    let message = "Muraho " + name + ", ubuyobozi bwa Chorale Getsemani bwemeje konti yawe. Ubu wakwinjira muri sisitemu: https://onrender.com";
+    let url = "https://whatsapp.com" + cleanPhone + "&text=" + encodeURIComponent(message);
+    
+    window.open(url, '_blank');
+}
+</script>
+
         </tbody>
     </table>
 </div>
