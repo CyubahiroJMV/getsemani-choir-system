@@ -245,11 +245,12 @@
 </td>
 <td style="padding: 10px;">
     {% if item.member.phone %}
-     <button type="button" 
-        onclick="openWhatsApp('{{ item.member.phone }}', '{{ item.member.name|escapejs }}')"
-        style="background-color: #25D366; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">
+     <a href="https://whatsapp.com{{ item.member.phone|slice:'1:' }}&text=Muraho%20{{ item.member.name|urlencode }}%2C%20konti%20yawe%20muri%20Chorale%20Getsemani%20yemejwe.%20Injira%20hano%3A%20https%3A%2F%://onrender.com%2Flogin%2F" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   style="background-color: #25D366; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85em; display: inline-block;">
     💬 Mumenyeshe
-</button>
+</a>
 
     {% else %}
         <span style="color: #94a3b8; font-size: 0.85em;">Nta nimero</span>
@@ -257,7 +258,9 @@
 </td>
 
             </tr>
-             <script>
+
+            {% endfor %}
+            <script>
 function openWhatsApp(phone, name) {
     if (!phone) {
         alert("Uyu muririmbyi nta nimero ya telefone afite!");
@@ -278,8 +281,6 @@ function openWhatsApp(phone, name) {
 }
 </script>
 
-
-            {% endfor %}
                    </tbody>
     </table>
 </div>
