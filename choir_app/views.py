@@ -56,29 +56,22 @@ def index(request):
 # 2. MASTER DASHBOARD PANEL Y'ABAYOBOZI (KUKOSORA: WITH LIVE PENDING VERIFICATION SYSTEM)
 @login_required(login_url='/login/')
 def dashboard(request):
-    # 1. Kurura imisanzu yose yinjijwe (Koresha izina rya model yawe nka Contribution)
-    contributions = Contribution.objects.all().order_by('-id')
-
-    # 2. Kurura abakoresha biyandikishije bategereje kwemezwa na Admin
-    pending_users = User.objects.filter(is_active=False)
-
     with connection.cursor() as cursor:
         cursor.execute("ALTER TABLE choir_app_attendance ADD COLUMN IF NOT EXISTS reason VARCHAR(100) DEFAULT '';")
+
     if request.user.username != 'admin_getsemani' and not request.user.is_superuser:
         logout(request)
         messages.error(request, "Ntabwo mufite uburenganzira bw'Ubuyobozi bwo kureba iyi Panel!")
         return redirect('login')
-        
+
     members = Member.objects.all()
-    songs = Song.objects.all()
-    contributions = Contribution.objects.all()
-    
-    # KUKOSORA NKURU: Gushakisha abaser bose biyandikishije batarakorwa verify (is_active=False)
+    songs = Song.objects.all().order_by('-id')
+    contributions = Contribution.objects.all().order_by('-id')
     pending_users = User.objects.filter(is_active=False)
-    
+
     member_form = MemberForm(request.POST or None)
     contribution_form = ContributionForm(request.POST or None)
-    
+
     if request.method == 'POST' and 'add_song' in request.POST:
         song_form = SongForm(request.POST, request.FILES)
         if song_form.is_valid():
@@ -87,7 +80,7 @@ def dashboard(request):
             return redirect('/panel/')
     else:
         song_form = SongForm()
-    
+
     if request.method == 'POST':
         if 'add_member' in request.POST and member_form.is_valid():
             member_form.save()
@@ -98,57 +91,13 @@ def dashboard(request):
             messages.success(request, "Umusanzu mushya winjijwe neza usesuye!")
             return redirect('/panel/')
 
-    context = {
-        'members': members,
-        'songs': songs,
-        'contributions': contributions,
-        'member_form': member_form,
-        'contribution_form': contribution_form,
-        'song_form': song_form,
-        'pending_users': pending_users, # Inyunguru nshya isunika abaser bafunze muli HTML
-    }
-  
+    # Gukurura ubwitabire (Abaje n'Abataraje)
     date_str = request.GET.get('date')
     if date_str:
         selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     else:
         selected_date = timezone.localdate()
 
-    members = Member.objects.all()
-    attendance_list = []
-    present_count = 0
-    absent_count = 0
-
-    for member in members:
-        att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
-        if att.is_present:
-            present_count += 1
-        else:
-            absent_count += 1
-        attendance_list.append({
-            'member': member,
-            'is_present': att.is_present,
-        })
-
-    songs = Song.objects.all().order_by('-id')
-
-    context = {
-        'songs': songs,
-        'attendance_list': attendance_list,
-        'selected_date': selected_date.strftime('%Y-%m-%d'),
-        'present_count': present_count,
-        'absent_count': absent_count,
-        # Icyitonderwa: Niba mu 'context' yawe hari hasanzwe harimo ibindi bintu (nka 'pending_users'), byongeremo hano
-    }
-   
-     # --- GUKURURA UBWITABIRE (ABAJE N'ABATARAJE) ---
-    date_str = request.GET.get('date')
-    if date_str:
-        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-    else:
-        selected_date = timezone.localdate()
-
-    members = Member.objects.all()
     attendance_list = []
     present_count = 0
     absent_count = 0
@@ -165,36 +114,21 @@ def dashboard(request):
             'reason': att.reason,
         })
 
-
-    # === ONGERA IBI BINE (4) MURI 'context' YARI ISANZWE MURI DASHBOARD YAWE ===
-    context['attendance_list'] = attendance_list
-    context['selected_date'] = selected_date.strftime('%Y-%m-%d')
-    context['present_count'] = present_count
-    context['absent_count'] = absent_count
-    
-    return render(request, 'choir_app/dashboard_new.html', {
-        'songs': songs,
-        'members': members,
-        'attendance_list': attendance_list,
-        'selected_date': selected_date.strftime('%Y-%m-%d'),
-        'present_count': present_count,
-        'absent_count': absent_count,
-        # (Niba hari ibindi bintu byari birimo nka 'pending_users' cyangwa 'contributions', bigumishemo hano)
-    })
-
-# 3. Huza byose muri 'context' yoherezwa kuri panel
     context = {
-        'songs': songs,
         'members': members,
+        'songs': songs,
+        'contributions': contributions,
+        'member_form': member_form,
+        'contribution_form': contribution_form,
+        'song_form': song_form,
+        'pending_users': pending_users,
         'attendance_list': attendance_list,
         'selected_date': selected_date.strftime('%Y-%m-%d'),
         'present_count': present_count,
         'absent_count': absent_count,
-        'contributions': contributions,      # Bigarura imisanzu mu kazu kayo
-        'imisanzu': contributions,           # Biringaniza niba HTML ikoresha 'imisanzu'
-        'pending_users': pending_users,      # Bigarura abategereje kwemezwa
     }
-    return render(request, 'choir_app/dashboard.html', context) # (Koresha izina rya HTML yawe yari isanzwe)
+    return render(request, 'choir_app/dashboard_new.html', context)
+
 
 # 3. LIST VIEWS FOR USERS (KUKOSORA: MEMBERS LIST WITH SEARCH ENGINE)
 @login_required(login_url='/login/')
@@ -535,7 +469,6 @@ def admin_register(request):
         user.is_superuser = False
         user.is_active = False  # Ibi bituma atinjira atabanje kwemezwa na Admin
         user.save()
-
         contact = form.cleaned_data.get('contact_input')
         
         # Genzura niba ibyanditswe muri akazu ari Email cyangwa Telefone
