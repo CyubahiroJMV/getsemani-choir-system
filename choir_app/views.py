@@ -533,11 +533,12 @@ def admin_register(request):
         user = form.save(commit=False)
         user.is_staff = False
         user.is_superuser = False
-        user.is_active = False # MASTER VERIFICATION: Gufunga konti ye kugeza Admin amwemeje muli Dashboard!
-        
+        user.is_active = False  # Ibi bituma atinjira atabanje kwemezwa na Admin
+        user.save()
+
         contact = form.cleaned_data.get('contact_input')
         
-        # Genzura niba ibyanditswe muli akazu ari Email cyangwa Telefone
+        # Genzura niba ibyanditswe muri akazu ari Email cyangwa Telefone
         if '@' in contact:
             user.email = contact
             user.save()
@@ -548,7 +549,7 @@ def admin_register(request):
             # Kurema Member profile live ihabwa numero ye ya telefone directly muli database!
             Member.objects.create(name=user.username, voice='Soprano', phone=contact)
         
-        messages.success(request, "Konti yanyu yanditswe neza muli system! Tegereza Ubuyobozi bw'Abaririmbyi buyemeze (Verify) mu masegonda gake.")
+        messages.success(request, "Konti yanyu yanditswe neza muri system! Tegereza Ubuyobozi bw'Abaririmbyi buyemeze (Verify) mu masegonda gake.")
         return redirect('login')
     return render(request, 'choir_app/register.html', {'form': form})
 
