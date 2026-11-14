@@ -102,25 +102,13 @@ def dashboard(request):
     attendance_list = []
     present_count = 0
     absent_count = 0
-
     for member in members:
         att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
         if att.is_present:
             present_count += 1
         else:
             absent_count += 1
-        attendance_list.append({
-            'member': member,
-            'is_present': att.is_present,
-            'reason': att.reason,
-        })
- att, created = Attendance.objects.get_or_create(member=member, date=selected_date)
-        if att.is_present:
-            present_count += 1
-        else:
-            absent_count += 1
 
-        # Tunganya nimero na link ya WhatsApp muri Python
         clean_phone = ''.join(filter(str.isdigit, str(member.phone or '')))
         if clean_phone.startswith('07'):
             clean_phone = '250' + clean_phone[1:]
@@ -136,6 +124,8 @@ def dashboard(request):
             'reason': att.reason,
             'wa_link': wa_link,
         })
+
+   
     context = {
         'members': members,
         'songs': songs,
