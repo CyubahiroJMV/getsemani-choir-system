@@ -27,23 +27,22 @@ class AttendanceForm(forms.Form):
 
 # 5. ADMIN REGISTER FORM (KUKOSORA KAMWE KU KAMWE: DYNAMIC DUAL CONTACT VALIDATION)
 class AdminRegisterForm(forms.ModelForm):
-   contact_input = forms.CharField(
+    contact_input = forms.CharField(
         max_length=100,
         required=True,
         label="Andika Email cyangwa Numero ya Telefone (Contact)",
         widget=forms.TextInput(attrs={'placeholder': 'Urugero: 0788123456 cyangwa izina@gmail.com'})
     )
-   contact_input = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika email cyangwa numero ya telefone...'}))
-   password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
-    
-   class Meta:
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
+    class Meta:
         model = User
         fields = ['username']
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': "Izina rya User (Username)..."}),
         }
 
-  def save(self, commit=True):
+   def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
         if commit:
@@ -55,6 +54,7 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
