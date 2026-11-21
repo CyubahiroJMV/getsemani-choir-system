@@ -18,6 +18,10 @@ from django.utils import timezone
 from datetime import datetime
 from django.db import connection
 from urllib.parse import quote
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+
 
 
 
@@ -514,7 +518,28 @@ def verify_user(request, user_id):
     user_to_verify.is_active = True  # Kwemeza konti ye live muli database!
     user_to_verify.save()
     
-    # 📢 AUTOMATIC SMS NOTIFICATION DISPATCHER INJECTION
+    # 1. 📧 AUTOMATIC EMAIL NOTIFICATION (Iyo yiyandikishije akoresheje Email)
+    if user_to_verify.email:
+        try:
+            send_mail(
+                subject="🎉 Konti yawe muri Chorale Getsemani Portal yemejwe!",
+                message=(
+                    f"Muraho {user_to_verify.username},\n\n"
+                    "Twishimiye kukumenyesha ko konti yawe muri Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi!\n\n"
+                    "Ubu ngubu ushobora guhita winjira (Login) muri sisitemu ukoresheje Username na Password byawe: "
+                    "https://onrender.com\n\n"
+                    "Murakoze cyane, Imana ibahe umugisha!"
+                ),
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user_to_verify.email],
+                fail_silently=False,
+            )
+            messages.success(request, f"Konti ya {user_to_verify.username} yemejwe kandi yohererejwe Email ako kanya!")
+            return redirect('/panel/')
+        except Exception as e:
+            print(f"Email Error: {e}")
+
+    # 2. 📢 AUTOMATIC SMS NOTIFICATION (Iyo yiyandikishije akoresheje Telefone)
     phone_number = None
     try:
         member_profile = Member.objects.get(name=user_to_verify.username)
@@ -525,32 +550,22 @@ def verify_user(request, user_id):
             phone_number = str(user_to_verify.username).strip()
 
     if phone_number:
-        # KUKOSORA NKURU: Guhindura numero ku nguvu ikaza muli format ya 25078...
         if phone_number.startswith('0'):
             phone_number = '250' + phone_number[1:]
         elif not phone_number.startswith('250'):
             phone_number = '250' + phone_number
 
         try:
-            sms_message = f"🎉 Yego! Konti yanyu muli Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi usesuye 100%!\n\nUbu ngubu ushobora guhita uwinjira (Login) muli System ukoresheje Username na Password byanyu ngo urebe Repertoire y'indirimbo, amaturo n'imisanzu usesuye.\n\nMurakoze cyane, Imana ibahe umugisha!"
-            
-            # 🛠️ AMATEGEKO NYAKURI: Gukoresha inzira isanzwe ya "Print to Console" niba mudafite API Key ishingiye ku mafaranga racyari ubu
-            # Ibi biratuma ubona ubutumwa directly live hasi muli Terminal bupfupfunyha amakuru y'ishema ngo wemeze ko byose byatunganye!
+            sms_message = f"🎉 Yego! Konti yanyu muli Chorale Getsemani Portal yamaze kwemezwa (Verified) n'Ubuyobozi!\nUbu ushobora kwinjira (Login) muli System.\nMurakoze, Imana ibahe umugisha!"
             print("\n" + "="*50)
             print(f"📢 SMS SENT TO: {phone_number}")
             print(f"💬 MESSAGE: {sms_message}")
             print("="*50 + "\n")
-            
-            # KUKOSORA NKURU: Niba mwamaze kugura imfunguzo muli SMS Provider (urugero nka Beem cyangwa PinPoint):
-            # Siba ubu buryo bwa print haruguru, maze ufungure iyi mirongo iri munsi:
-            # sms_api_url = "https://api.sms_provider.com/v1/send"
-            # sms_payload = {"to": phone_number, "message": sms_message, "sender_id": "GETSEMANI", "api_key": "YOUR_KEY"}
-            # requests.post(sms_api_url, json=sms_payload, timeout=5)
-            
         except Exception:
             pass
             
     messages.success(request, f"Konti ya {user_to_verify.username} yamaze kwemezwa neza muli database usesuye!")
     return redirect('/panel/')
+
 
 
