@@ -27,30 +27,12 @@ class AttendanceForm(forms.Form):
 
 # 5. ADMIN REGISTER FORM (KUKOSORA KAMWE KU KAMWE: DYNAMIC DUAL CONTACT VALIDATION)
 class AdminRegisterForm(forms.ModelForm):
-    contact_input = forms.CharField(
-        label="Email cyangwa Numero ya Telefone",
-        widget=forms.TextInput(attrs={'placeholder': 'Andika email cyangwa numero ya telefone...'})
-    )
-    password = forms.CharField(
-        label="Ijambo ry'ibanga (Password)",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Andika password...'})
-    )
-    confirm_password = forms.CharField(
-        label="Emeza Ijambo ry'ibanga",
-        widget=forms.PasswordInput(attrs={'placeholder': 'Subiramo password...'})
-    )
+    contact_input = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
         model = User
         fields = ['username']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
-        if password and confirm_password and password != confirm_password:
-            raise forms.ValidationError("Ijambo ry'ibanga (Passwords) ntirihura!")
-        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -59,10 +41,12 @@ class AdminRegisterForm(forms.ModelForm):
             user.save()
         return user
 
+
 # 6. ADMIN LOGIN FORM
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
