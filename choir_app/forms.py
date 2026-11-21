@@ -42,7 +42,7 @@ class AdminRegisterForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'placeholder': "Izina rya User (Username)..."}),
         }
 
-   def save(self, commit=True):
+    def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
         if commit:
@@ -54,6 +54,7 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
