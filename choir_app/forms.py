@@ -27,6 +27,34 @@ class AttendanceForm(forms.Form):
 
 # 5. ADMIN REGISTER FORM (KUKOSORA KAMWE KU KAMWE: DYNAMIC DUAL CONTACT VALIDATION)
 class AdminRegisterForm(forms.ModelForm):
+    form = AdminRegisterForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = False
+            user.is_superuser = False
+            user.is_active = False
+            user.save()
+            contact = form.cleaned_data.get('contact_input')
+            
+            if '@' in contact:
+                user.email = contact
+                user.save()
+                Member.objects.create(name=user.username, voice='Soprano', phone="Nta telefone yanditse")
+            else:
+                user.save()
+                Member.objects.create(name=user.username, voice='Soprano', phone=contact)
+            
+            messages.success(request, "Konti yanyu yanditswe neza muri system! Tegereza Ubuyobozi bw'Abaririmbyi buyemeze (Verify) mu masegonda gake.")
+            return redirect('login')
+        else:
+            # IBI BIZEREKANA IKOSA NYAKURI RYATUMYE BYANGA
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+                    
+    return render(request, 'choir_app/register.html', {'form': form})
+
     contact_input = forms.CharField(
         max_length=100,
         required=True,
@@ -54,6 +82,7 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
