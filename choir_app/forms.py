@@ -33,10 +33,10 @@ class AdminRegisterForm(forms.ModelForm):
         label="Andika Email cyangwa Numero ya Telefone (Contact)",
         widget=forms.TextInput(attrs={'placeholder': 'Urugero: 0788123456 cyangwa izina@gmail.com'})
     )
-  contact_input = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika email cyangwa numero ya telefone...'}))
-  password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+   contact_input = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika email cyangwa numero ya telefone...'}))
+   password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
     
-  class Meta:
+   class Meta:
         model = User
         fields = ['username']
         widgets = {
@@ -55,5 +55,6 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
