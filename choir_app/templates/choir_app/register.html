@@ -70,6 +70,12 @@
         </div>
         
         <div class="register-body">
+            {% if messages %}
+    {% for message in messages %}
+        <div style="background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; margin-bottom: 15px;">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
             <form method="POST" action="">
                 {% csrf_token %}
                 
@@ -82,7 +88,7 @@
                             <!-- KUKOSORA KAMWE KU KAMWE: AKAZU K'AMAHITAMO (EMAIL CYANGWA TELEPHONE NUMBER) -->
             <div class="form-group">
                 <label>Andika Email cyangwa Numero ya Telefoni (Contact):</label>
-                <input type="text" name="contact" placeholder="Urugero: 0788123456 cyangwa izina@gmail.com" required>
+                <input type="text" name="contact_input" placeholder="Urugero: 0788123456 cyangwa izina@gmail.com" required>
             </div>
 
 
@@ -102,4 +108,5 @@
 
 </body>
 </html>
+
 
