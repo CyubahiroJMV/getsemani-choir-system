@@ -53,7 +53,7 @@ class AdminRegisterForm(forms.ModelForm):
                 for error in errors:
                     messages.error(request, f"{field}: {error}")
                     
-    return render(request, 'choir_app/register.html', {'form': form})
+        return render(request, 'choir_app/register.html', {'form': form})
 
     contact_input = forms.CharField(
         max_length=100,
@@ -82,6 +82,7 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
