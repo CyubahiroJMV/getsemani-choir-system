@@ -44,7 +44,7 @@ class AdminRegisterForm(forms.ModelForm):
         model = User
         fields = ['username']
 
-   def clean(self):
+    def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
@@ -59,11 +59,11 @@ class AdminRegisterForm(forms.ModelForm):
             user.save()
         return user
 
-
 # 6. ADMIN LOGIN FORM
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
