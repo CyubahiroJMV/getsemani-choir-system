@@ -27,35 +27,37 @@ class AttendanceForm(forms.Form):
 
 # 5. ADMIN REGISTER FORM (KUKOSORA KAMWE KU KAMWE: DYNAMIC DUAL CONTACT VALIDATION)
 class AdminRegisterForm(forms.ModelForm):
-    def admin_register(request):
-    form = AdminRegisterForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_staff = False
-            user.is_superuser = False
-            user.is_active = False
-            user.save()
-            contact = form.cleaned_data.get('contact_input')
-            
-            if '@' in contact:
-                user.email = contact
-                user.save()
-                Member.objects.create(name=user.username, voice='Soprano', phone="Nta telefone yanditse")
-            else:
-                user.save()
-                Member.objects.create(name=user.username, voice='Soprano', phone=contact)
-            
-            messages.success(request, "Konti yanyu yanditswe neza muri system! Tegereza Ubuyobozi bw'Abaririmbyi buyemeze (Verify) mu masegonda gake.")
-            return redirect('login')
-        else:
-            # IBI BIZEREKANA IKOSA NYAKURI RYATUMYE BYANGA
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-                    
-    return render(request, 'choir_app/register.html', {'form': form})
+    contact_input = forms.CharField(
+        label="Email cyangwa Numero ya Telefone",
+        widget=forms.TextInput(attrs={'placeholder': 'Andika email cyangwa numero ya telefone...'})
+    )
+    password = forms.CharField(
+        label="Ijambo ry'ibanga (Password)",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Andika password...'})
+    )
+    confirm_password = forms.CharField(
+        label="Emeza Ijambo ry'ibanga",
+        widget=forms.PasswordInput(attrs={'placeholder': 'Subiramo password...'})
+    )
 
+   class Meta:
+        model = User
+        fields = ['username']
+
+   def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Ijambo ry'ibanga (Passwords) ntirihura!")
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
 
 
 # 6. ADMIN LOGIN FORM
