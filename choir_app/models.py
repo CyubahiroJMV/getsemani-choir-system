@@ -8,7 +8,15 @@ class Member(models.Model):
     phone = models.CharField(max_length=20)
     voice = models.CharField(max_length=50)
 
-    def __str__(self):
+     def whatsapp_phone(self):
+        # Kuramo imyanya n'akamenyetso ka +
+        clean_phone = self.phone.strip().replace(" ", "").replace("+", "")
+        # Niba itangijwe na 07..., yihindure 2507...
+        if clean_phone.startswith("0"):
+            clean_phone = "250" + clean_phone[1:]
+        return clean_phone
+    
+      def __str__(self):
         return self.name
 
 
