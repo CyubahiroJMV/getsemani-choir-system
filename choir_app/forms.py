@@ -40,7 +40,7 @@ class AdminRegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={'placeholder': 'Subiramo password...'})
     )
 
-   class Meta:
+    class Meta:
         model = User
         fields = ['username']
 
@@ -64,6 +64,7 @@ class AdminRegisterForm(forms.ModelForm):
 class AdminLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Andika Username...'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Andika Password...'}))
+
 
 
 
