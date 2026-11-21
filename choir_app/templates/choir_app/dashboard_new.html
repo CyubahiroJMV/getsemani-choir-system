@@ -244,14 +244,10 @@
     {% endif %}
 </td>
 <td style="padding: 10px;">
-<!-- Urugero rw'uko button ya Mumenyeshe igomba kuba imeze -->
-<a href="https://wa.me{{ member.phone }}?text={{ message|urlencode }}" 
-   target="_blank" 
-   rel="noopener noreferrer" 
-   class="btn btn-success">
+<a href="https://wa.me{{ member.whatsapp_phone }}?text=Muraho%20{{ member.name|urlencode }},%20konti%20yanyu%20muri%20Getsemani%20Choir%20yemejwe!" 
+   target="_blank">
    Mumenyeshe
 </a>
-
 
 </td>
             </tr>
@@ -334,4 +330,5 @@
 
 </body>
 </html>
+
 
